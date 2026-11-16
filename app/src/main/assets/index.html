@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070d18">
-<title>CVT TEMP</title>
+<title>HUSTLER MONITOR</title>
 <style>
 :root{--bg0:#070d18;--bg1:#0c1526;--surface:rgba(19,31,51,.78);--line:rgba(120,160,220,.18);--text:#eaf2ff;--muted:#93a7c9;--cool:#3fd9ff;--ok:#57e389;--warn:#ffb020;--danger:#ff4040;--info:#4f8cff;--demo:#ff4fd8;--eng:#ff9f43;--rpm:#a78bfa;--zone:#57e389;--scale:1;--glow:1}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -62,14 +62,14 @@ main{display:grid;gap:12px;padding:12px;max-width:1180px;margin:0 auto;grid-temp
 .tb-digits.alarm{animation:segpulse 1.05s ease-in-out infinite}
 @keyframes segpulse{0%,100%{opacity:1}50%{opacity:.45}}
 .tb-barwrap{flex:1;min-width:0}
-.tb-bar{position:relative;height:17px;border-radius:99px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 4px rgba(0,0,0,.45)}
+.tb-bar{position:relative;height:12px;border-radius:99px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 4px rgba(0,0,0,.45)}
 .tb-fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#3fd9ff,#57e389 42%,#ffb020 74%,#ff4040);width:0%;transition:width .8s ease,box-shadow .5s;box-shadow:0 0 calc(12px * var(--glow)) var(--bz)}
-.tb-tick{position:absolute;top:-5px;bottom:-5px;width:2px;border-radius:2px;z-index:2}
+.tb-tick{position:absolute;top:-3px;bottom:-3px;width:2px;border-radius:2px;z-index:2}
 .tb-tick.warn{background:#ffb020}.tb-tick.danger{background:#ff4040}
-.tb-marker{position:absolute;top:50%;width:21px;height:21px;border-radius:50%;background:#fff;border:3px solid var(--bz);transform:translate(-50%,-50%);box-shadow:0 0 calc(11px * var(--glow)) var(--bz);transition:left .8s ease,border-color .5s,box-shadow .5s;z-index:3}
+.tb-marker{position:absolute;top:50%;width:17px;height:17px;border-radius:50%;background:#fff;border:4px solid var(--bz);transform:translate(-50%,-50%);box-shadow:0 0 calc(11px * var(--glow)) var(--bz);transition:left .8s ease,border-color .5s,box-shadow .5s;z-index:3}
 .tb-scale{display:flex;justify-content:space-between;font:600 9px system-ui;color:var(--muted);margin-top:8px}
 .controls-card{order:4}
-.ctl{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed rgba(120,160,220,.12)}
+.ctl{display:flex;align-items:center;gap:10px;padding:7px 0;}
 .ctl:last-child{border-bottom:none}
 .ctl.tappable{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .ctl.tappable:active{background:rgba(63,217,255,.06)}
@@ -156,17 +156,17 @@ footer{padding:16px;text-align:center;font-size:10px;color:var(--muted)}
 #widgetView{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;gap:10px;padding:14px;background:linear-gradient(180deg,rgba(7,13,24,.98),rgba(12,21,38,.98));overflow:auto}
 #widgetView[hidden]{display:none}
 body.widget-open{overflow:hidden}
-.w-head{display:flex;align-items:center;gap:8px;flex:none}
+.w-head{display:flex;align-items:center;gap:6px;flex:none}
 .w-brand{display:flex;align-items:center;gap:8px;margin-right:auto;font:700 14px system-ui;letter-spacing:.06em}
 .w-brand svg{width:24px;height:24px}
 .w-actions{display:flex;gap:7px}
-.w-tiles{flex:1;display:grid;gap:10px;grid-template-columns:1fr;align-content:center;min-height:0}
+.w-tiles{flex:1;display:grid;gap:6px;grid-template-columns:1fr;align-content:center;min-height:0}
 .w-tile{--bz:#57e389;--accent:var(--cool);background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;position:relative;overflow:hidden}
 .w-tile.engine{--accent:var(--eng)}
 .w-tile.rpm{--accent:var(--rpm)}
 .w-tile .tb-icon{width:32px;height:32px}
 .w-digits{--dh:clamp(62px,18vw,120px);justify-content:center;transform-origin:center;margin:6px 0 12px}
-#wChart{width:100%;height:60px;flex:none;display:block}
+#wChart{width:100%;height:130px;flex:none;display:block}
 @media(min-width:760px){.w-tiles{grid-template-columns:1fr 1fr 1fr}.w-digits{--dh:clamp(38px,6.5vw,76px)}}
 @media(orientation:landscape) and (max-height:520px){#widgetView{padding:9px;gap:7px}.w-tiles{grid-template-columns:1fr 1fr 1fr;gap:8px}.w-tile{padding:10px}.w-tile .tb-top{margin-bottom:4px}.w-tile .tb-icon{width:26px;height:26px}.w-tile .tb-label small{display:none}.w-digits{--dh:clamp(32px,10vh,70px);margin:2px 0 8px}#wChart{height:34px}}
 @media(min-width:960px){main{grid-template-columns:1.12fr .88fr;align-items:start}.temp-card{grid-column:1;grid-row:1}.chart-card{grid-column:1;grid-row:2}.controls-card{grid-column:1;grid-row:3}.stats-card{grid-column:2;grid-row:1}.source-card{grid-column:2;grid-row:2}.log-card{grid-column:2;grid-row:3}.help{grid-column:1/-1;grid-row:4}}
@@ -180,12 +180,11 @@ body.widget-open{overflow:hidden}
 <header>
   <div class="brand">
     <svg viewBox="0 0 24 24" fill="none"><path d="M3 15a9 9 0 1 1 18 0" stroke="#3fd9ff" stroke-width="2" stroke-linecap="round"/><path d="M12 15l4.2-5.4" stroke="#ff4040" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="1.8" fill="#eaf2ff"/></svg>
-    <div><b>RPM·CVT·ENGINE</b><small>SUZUKI HUSTLER</small></div>
+    <div><b>HUSTLER</b><small>SUZUKI HUSTLER</small></div>
   </div>
   <span class="chip demo" id="statusChip">ДЕМО</span>
-  <button class="iconbtn" id="widgetBtn" title="Виджет">▣</button>
+  <button class="iconbtn" id="widgetBtn" title="Виджет">▣</button> 
   <button class="iconbtn" id="soundBtn" title="Звук">🔊</button>
-  <button class="iconbtn" id="fsBtn" title="Полный экран">⛶</button>
 </header>
 <main>
   <section class="card temp-card" style="--d:.05s">
@@ -196,9 +195,11 @@ body.widget-open{overflow:hidden}
         <svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 23a12 12 0 1 1 24 0"/><path d="M16 23l7-8"/><circle cx="16" cy="23" r="2" fill="currentColor" stroke="none"/><path d="M6 17h2M24 17h2M16 8v2"/></svg>
         <div><b>ОБОРОТЫ</b></div></div><span class="tb-zone" id="rpmZone">НОРМА</span></div>
       <div class="tb-main">
-        <div class="tb-digits"><span class="dgs" id="rpmDigits"></span><span class="unit">об/мин</span></div>
+        <div class="tb-digits"><span class="dgs" id="rpmDigits"></span><span class="unit">RPM</span></div>
+	<div class="ctl"><label>Обороты · порог</label><input type="range" id="rpmWarnRange" class="r-rpm" min="0" max="5800" step="100" value="4500"><span class="val" id="rpmWarnVal">4500</span></div>
         <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="rpmFill"></div><i class="tb-tick warn" id="rpmTickWarn"></i><i class="tb-tick danger" id="rpmTickDanger"></i><i class="tb-marker" id="rpmMarker" style="display:none"></i></div>
-        <div class="tb-scale"><span>0</span><span>1500</span><span>1750</span><span>5250</span><span>7000</span></div></div></div>
+        <div class="tb-scale" data-ch="rpm"></div>
+
     </div>
 
     <div class="temp-block" id="cvtTile">
@@ -206,9 +207,14 @@ body.widget-open{overflow:hidden}
         <svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h12a8 8 0 0 1 0 16H10a8 8 0 0 1 0-16z"/><circle cx="10" cy="16" r="4.5"/><circle cx="22" cy="16" r="4.5"/><circle cx="10" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="22" cy="16" r="1.4" fill="currentColor" stroke="none"/><path d="M14.5 16h3" opacity=".6"/></svg>
         <div><b>ВАРИАТОР</b></div></div><span class="tb-zone" id="cvtZone">НОРМА</span></div>
       <div class="tb-main">
-        <div class="tb-digits"><span class="dgs" id="cvtDigits"></span><span class="unit">C</span></div>
+        <div class="tb-digits"><span class="dgs" id="cvtDigits"></span></div>
+
+	<div class="ctl"><label>CVT · горячо</label><input type="range" id="warnRange" class="r-warn" min="70" max="105" value="90"><span class="val" id="warnVal">90°</span></div>
+    	<div class="ctl"><label>CVT · перегрев</label><input type="range" id="dangerRange" class="r-danger" min="100" max="130" value="110"><span class="val" id="dangerVal">110°</span></div>
+
         <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="cvtFill"></div><i class="tb-tick warn" id="cvtTickWarn"></i><i class="tb-tick danger" id="cvtTickDanger"></i><i class="tb-marker" id="cvtMarker" style="display:none"></i></div>
-        <div class="tb-scale"><span>0°</span><span>40°</span><span>80°</span><span>120°</span><span>150°</span></div></div></div>
+        <div class="tb-scale" data-ch="cvt"></div>
+
     </div>
 
     <div class="temp-block engine" id="engTile">
@@ -216,9 +222,18 @@ body.widget-open{overflow:hidden}
         <svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M9 10h9l3 3h4v4h3v6h-3v3H12l-3-3H6v-4H3v-5h3v-3h3z"/><path d="M12 5h7M15.5 5v5"/></svg>
         <div><b>ДВИГАТЕЛЬ</b></div></div><span class="tb-zone" id="engZone">НОРМА</span></div>
       <div class="tb-main">
-        <div class="tb-digits"><span class="dgs" id="engDigits"></span><span class="unit">C</span></div>
-        <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="engFill"></div><i class="tb-tick warn" id="engTickWarn"></i><i class="tb-tick danger" id="engTickDanger"></i><i class="tb-marker" id="engMarker" style="display:none"></i></div>
-        <div class="tb-scale"><span>40°</span><span>60°</span><span>80°</span><span>100°</span><span>120°</span></div></div></div>
+        <div class="tb-digits"><span class="dgs" id="engDigits"></span></div>
+
+    	<div class="ctl"><label>ДВС · горячо</label><input type="range" id="engWarnRange" class="r-warn" min="85" max="110" value="100"><span class="val" id="engWarnVal">100°</span></div>
+    	<div class="ctl"><label>ДВС · перегрев</label><input type="range" id="engDangerRange" class="r-danger" min="105" max="130" value="112"><span class="val" id="engDangerVal">112°</span></div>
+            
+	<div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="engFill"></div><i class="tb-tick warn" id="engTickWarn"></i><i class="tb-tick danger" id="engTickDanger"></i><i class="tb-marker" id="engMarker" style="display:none"></i></div>
+	<div class="ctl"><label>Размер цифр</label><input type="range" id="scaleRange" min="60" max="125" value="100"><span class="val" id="scaleVal">100%</span></div>
+    	<div class="ctl"><label>Свечение цифр</label><input type="range" id="glowRange" min="0" max="200" value="100"><span class="val" id="glowVal">100%</span></div>
+    	<div class="ctl"><label>Наклон цифр</label><input type="range" id="slantRange" min="-14" max="0" value="-6"><span class="val" id="slantVal">-6°</span></div>
+    	<div class="ctl"><label>Выключ. сегменты</label><input type="range" id="ghostRange" min="0" max="30" value="2"><span class="val" id="ghostVal">8%</span></div>
+            
+	<div class="tb-scale" data-ch="eng"></div>
     </div>
   </section>
 
@@ -235,23 +250,15 @@ body.widget-open{overflow:hidden}
     <div class="statgroup"><div class="statgroup-title"><i class="r"></i>Обороты</div><div class="stats"><div class="stat"><b id="rMin">--</b><span>Мин</span></div><div class="stat"><b id="rMax">--</b><span>Макс</span></div><div class="stat"><b id="rAvg">--</b><span>Среднее</span></div></div></div>
     <div class="statgroup"><div class="statgroup-title"><i class="c"></i>Вариатор</div><div class="stats"><div class="stat"><b id="cMin">--</b><span>Мин</span></div><div class="stat"><b id="cMax">--</b><span>Макс</span></div><div class="stat"><b id="cAvg">--</b><span>Среднее</span></div><div class="stat hot"><b id="cHot">0:00</b><span>Время ≥⚠</span></div><div class="stat ovh"><b id="cOvh">0</b><span>Перегревы</span></div></div></div>
     <div class="statgroup"><div class="statgroup-title"><i class="e"></i>Двигатель</div><div class="stats"><div class="stat"><b id="eMin">--</b><span>Мин</span></div><div class="stat"><b id="eMax">--</b><span>Макс</span></div><div class="stat"><b id="eAvg">--</b><span>Среднее</span></div><div class="stat hot"><b id="eHot">0:00</b><span>Время ≥⚠</span></div><div class="stat ovh"><b id="eOvh">0</b><span>Перегревы</span></div></div></div>
-  </section>
+    <div class="btnrow"><button class="btn" id="resetBtn">↺ Сброс</button><button class="btn" id="csvBtn">⤓ CSV</button></div>
+</section>
 
   <section class="card controls-card" style="--d:.24s">
     <h2>Пульт управления</h2>
     <button class="btn primary wide" id="connectBtn">⚡ Подключить адаптер</button>
     <div class="ctl tappable" data-toggle="demoSwitch"><label>Демо</label><span class="switch"><input type="checkbox" id="demoSwitch" checked><i></i></span></div>
     <div class="ctl tappable" data-toggle="wakeSwitch"><label>Экран не гаснет</label><span class="switch"><input type="checkbox" id="wakeSwitch"><i></i></span></div>
-    <div class="ctl"><label>Обороты · порог</label><input type="range" id="rpmWarnRange" class="r-rpm" min="0" max="5800" step="100" value="4500"><span class="val" id="rpmWarnVal">4500</span></div>
-    <div class="ctl"><label>CVT · горячо</label><input type="range" id="warnRange" class="r-warn" min="70" max="105" value="90"><span class="val" id="warnVal">90°</span></div>
-    <div class="ctl"><label>CVT · перегрев</label><input type="range" id="dangerRange" class="r-danger" min="100" max="130" value="110"><span class="val" id="dangerVal">110°</span></div>
-    <div class="ctl"><label>ДВС · горячо</label><input type="range" id="engWarnRange" class="r-warn" min="85" max="110" value="100"><span class="val" id="engWarnVal">100°</span></div>
-    <div class="ctl"><label>ДВС · перегрев</label><input type="range" id="engDangerRange" class="r-danger" min="105" max="130" value="112"><span class="val" id="engDangerVal">112°</span></div>
-    <div class="ctl"><label>Размер цифр</label><input type="range" id="scaleRange" min="60" max="125" value="100"><span class="val" id="scaleVal">100%</span></div>
-    <div class="ctl"><label>Свечение цифр</label><input type="range" id="glowRange" min="0" max="200" value="100"><span class="val" id="glowVal">100%</span></div>
-    <div class="ctl"><label>Наклон цифр</label><input type="range" id="slantRange" min="-14" max="0" value="-6"><span class="val" id="slantVal">-6°</span></div>
-    <div class="ctl"><label>Выключ. сегменты</label><input type="range" id="ghostRange" min="0" max="30" value="2"><span class="val" id="ghostVal">8%</span></div>
-    <div class="btnrow"><button class="btn" id="resetBtn">↺ Сброс</button><button class="btn" id="csvBtn">⤓ CSV</button><button class="btn" id="widgetBtn2">▣ Виджет</button></div>
+    
   </section>
 
   <section class="card source-card" style="--d:.3s">
@@ -299,20 +306,22 @@ body.widget-open{overflow:hidden}
   <div class="btnrow"><button class="btn" id="btSettingsBtn">⚙ Настройки BT</button><button class="btn" id="pickerClose">Закрыть</button></div>
 </div></div>
 
+
+
 <div id="widgetView" hidden>
-  <div class="w-head"><div class="w-brand"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15a9 9 0 1 1 18 0" stroke="#3fd9ff" stroke-width="2" stroke-linecap="round"/><path d="M12 15l4.2-5.4" stroke="#ff4040" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="1.8" fill="#eaf2ff"/></svg>RPM·CVT·ENGINE</div>
+  <div class="w-head"><div class="w-brand"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15a9 9 0 1 1 18 0" stroke="#3fd9ff" stroke-width="2" stroke-linecap="round"/><path d="M12 15l4.2-5.4" stroke="#ff4040" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="1.8" fill="#eaf2ff"/></svg>HUSTLER</div>
     <span class="chip demo" id="wStatusChip">ДЕМО</span>
-    <div class="w-actions"><button class="iconbtn" id="wConnectBtn">⚡</button><button class="iconbtn" id="wSoundBtn">🔊</button><button class="iconbtn" id="wFsBtn">⛶</button><button class="iconbtn" id="wExitBtn">✕</button></div></div>
+    <div class="w-actions"><button class="iconbtn" id="wConnectBtn">⚡</button><button class="iconbtn" id="wSoundBtn">🔊</button><button class="iconbtn" id="wExitBtn">✕</button></div></div>
   <div class="w-tiles">
     <div class="w-tile rpm" id="wRpmTile"><div class="tb-top"><div class="tb-label"><svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 23a12 12 0 1 1 24 0"/><path d="M16 23l7-8"/><circle cx="16" cy="23" r="2" fill="currentColor" stroke="none"/></svg><div><b>ОБОРОТЫ</b></div></div><span class="tb-zone" id="wRpmZone">НОРМА</span></div>
-      <div class="tb-digits w-digits"><span class="dgs" id="wRpmDigits"></span><span class="unit">об/мин</span></div>
-      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wRpmFill"></div><i class="tb-tick warn" id="wRpmTickWarn"></i><i class="tb-tick danger" id="wRpmTickDanger"></i><i class="tb-marker" id="wRpmMarker" style="display:none"></i></div><div class="tb-scale"><span>0</span><span>3500</span><span>7000</span></div></div></div>
+      <div class="tb-digits w-digits"><span class="dgs" id="wRpmDigits"></span><span class="unit">.RPM</span></div>
+      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wRpmFill"></div><i class="tb-tick warn" id="wRpmTickWarn"></i><i class="tb-tick danger" id="wRpmTickDanger"></i><i class="tb-marker" id="wRpmMarker" style="display:none"></i></div><div class="tb-scale" data-ch="rpm"></div></div></div>
     <div class="w-tile" id="wCvtTile"><div class="tb-top"><div class="tb-label"><svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h12a8 8 0 0 1 0 16H10a8 8 0 0 1 0-16z"/><circle cx="10" cy="16" r="4.5"/><circle cx="22" cy="16" r="4.5"/><circle cx="10" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="22" cy="16" r="1.4" fill="currentColor" stroke="none"/></svg><div><b>ВАРИАТОР</b></div></div><span class="tb-zone" id="wCvtZone">НОРМА</span></div>
-      <div class="tb-digits w-digits"><span class="dgs" id="wCvtDigits"></span><span class="unit">C</span></div>
-      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wCvtFill"></div><i class="tb-tick warn" id="wCvtTickWarn"></i><i class="tb-tick danger" id="wCvtTickDanger"></i><i class="tb-marker" id="wCvtMarker" style="display:none"></i></div><div class="tb-scale"><span>0°</span><span>80°</span><span>150°</span></div></div></div>
+      <div class="tb-digits w-digits"><span class="dgs" id="wCvtDigits"></span></div>
+      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wCvtFill"></div><i class="tb-tick warn" id="wCvtTickWarn"></i><i class="tb-tick danger" id="wCvtTickDanger"></i><i class="tb-marker" id="wCvtMarker" style="display:none"></i></div><div class="tb-scale" data-ch="cvt"></div></div></div>
     <div class="w-tile engine" id="wEngTile"><div class="tb-top"><div class="tb-label"><svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M9 10h9l3 3h4v4h3v6h-3v3H12l-3-3H6v-4H3v-5h3v-3h3z"/><path d="M12 5h7M15.5 5v5"/></svg><div><b>ДВИГАТЕЛЬ</b></div></div><span class="tb-zone" id="wEngZone">НОРМА</span></div>
-      <div class="tb-digits w-digits"><span class="dgs" id="wEngDigits"></span><span class="unit">C</span></div>
-      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wEngFill"></div><i class="tb-tick warn" id="wEngTickWarn"></i><i class="tb-tick danger" id="wEngTickDanger"></i><i class="tb-marker" id="wEngMarker" style="display:none"></i></div><div class="tb-scale"><span>40°</span><span>80°</span><span>120°</span></div></div></div>
+      <div class="tb-digits w-digits"><span class="dgs" id="wEngDigits"></span></div>
+      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wEngFill"></div><i class="tb-tick warn" id="wEngTickWarn"></i><i class="tb-tick danger" id="wEngTickDanger"></i><i class="tb-marker" id="wEngMarker" style="display:none"></i></div><div class="tb-scale" data-ch="eng"></div></div></div>
   </div>
   <canvas id="wChart"></canvas>
 </div>
@@ -392,6 +401,15 @@ function renderDigits(el,val,ch){
 const ZONES={cool:{rank:0,label:'ХОЛОДНЫЙ',color:'#3fd9ff'},ok:{rank:1,label:'НОРМА',color:'#57e389'},warn:{rank:2,label:'ГОРЯЧО',color:'#ffb020'},danger:{rank:3,label:'ПЕРЕГРЕВ',color:'#ff4040'}};
 const RZ={low:{rank:0,label:'ХОЛОСТОЙ',color:'#3fd9ff'},ok:{rank:1,label:'НОРМА',color:'#57e389'},warn:{rank:2,label:'ВЫСОКИЕ',color:'#ffb020'},danger:{rank:3,label:'ОТСЕЧКА',color:'#ff4040'}};
 const RANGE={cvt:{min:0,max:150},eng:{min:40,max:130},rpm:{min:0,max:7000}};
+
+function makeScaleLabels(ch){
+  const g=RANGE[ch], n=5, labels=[];
+  for(let i=0;i<n;i++){
+    const v=Math.round(g.min+(g.max-g.min)*i/(n-1));
+    labels.push(ch==='rpm'?String(v):v+'°');
+  }
+  return labels;
+}
 const PRESETS=[{header:'7E1',req:'2104',byte:0,offset:-50},{header:'7E2',req:'2104',byte:0,offset:-50}];
 const ENG_DEF={header:'7E0',req:'0105',byte:0,offset:-40};
 const RPM_SRC={header:'7E0',req:'010C'};
@@ -427,7 +445,7 @@ function paintBlock(r,ch,t,z,stale){
 const chart=$('#chart'),wChart=$('#wChart');
 
 function prepCanvas(c,hDef){const ctx=c.getContext('2d'),w=c.clientWidth||300,h=c.clientHeight||hDef,dpr=Math.min(2,window.devicePixelRatio||1);if(c.width!==Math.round(w*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);return{ctx,w,h};}
-const RPM_FULL=5000;
+const RPM_FULL=6000;
 function drawChart(){
   const{ctx,w,h}=prepCanvas(chart,170),data=state.history.slice(-180);
   if(data.length<2){ctx.fillStyle='#93a7c9';ctx.font='12px system-ui';ctx.fillText('Нет данных…',12,h/2);return;}
@@ -614,8 +632,9 @@ $('#wConnectBtn').onclick=()=>{state.mode==='ble'?(disconnectAdapter(),toast('О
 $('#demoSwitch').onchange=e=>{if(e.target.checked){if(state.mode==='ble')disconnectAdapter();startDemo();}else{stopDemo();state.mode='idle';state.cvt=null;state.eng=null;state.rpm=null;setChip('off','OFFLINE');setConnectUI(false);render();}};
 $('#wakeSwitch').onchange=e=>setWake(e.target.checked);
 $('#soundBtn').onclick=toggleSound;$('#wSoundBtn').onclick=toggleSound;
-$('#fsBtn').onclick=()=>toast('Полный экран управляется системой');$('#wFsBtn').onclick=()=>toast('Полный экран управляется системой');
-$('#widgetBtn').onclick=()=>{widgetOpen?closeWidget():openWidget();};$('#widgetBtn2').onclick=openWidget;$('#wExitBtn').onclick=closeWidget;
+
+$('#widgetBtn').onclick=()=>{widgetOpen?closeWidget():openWidget();};$('#wExitBtn').onclick=closeWidget;
+
 $('#btSettingsBtn').onclick=()=>{if(NATIVE)AndroidBT.openBluetoothSettings();};$('#pickerClose').onclick=closeDevicePicker;
 function bindRange(id,key){$(id).oninput=e=>{state[key]=+e.target.value;
  if(state.danger<=state.warn+4)state.danger=state.warn+5;if(state.engDanger<=state.engWarn+4)state.engDanger=state.engWarn+5;
@@ -646,6 +665,49 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
  setTimeout(()=>{boot=false;render();},750);
  if(state.keepAwake&&NATIVE)setTimeout(()=>AndroidBT.setKeepScreenOn(true),600);
  if(new URLSearchParams(location.search).get('widget')==='1')openWidget();})();
+document.querySelectorAll('.tb-scale[data-ch]').forEach(el=>{
+  const ch=el.dataset.ch;
+  el.innerHTML=makeScaleLabels(ch).map(l=>'<span>'+l+'</span>').join('');
+});
+/* ===== ПЕРЕКЛЮЧАТЕЛЬ «НАСТРОЙКИ» (самодостаточный) ===== */
+(function(){
+  const st=document.createElement('style');
+  st.textContent='.settings-hidden .settings-item{display:none!important}';
+  document.head.appendChild(st);
+
+    const demoRow=document.getElementById('demoSwitch').closest('.ctl');
+  let row=document.getElementById('settingsRow');
+  if(!row){
+    row=document.createElement('div');
+    row.id='settingsRow';
+    row.className='ctl tappable';
+    row.innerHTML='<label>Настройки</label><span class="switch"><input type="checkbox" id="settingsSwitch"><i></i></span>';
+    demoRow.before(row);
+  }
+
+  ['rpmWarnRange','warnRange','dangerRange','engWarnRange','engDangerRange',"scaleRange",'glowRange','slantRange','ghostRange','demoSwitch','wakeSwitch']
+    .forEach(id=>{const el=document.getElementById(id);if(el)el.closest('.ctl').classList.add('settings-item');});
+  const src=document.querySelector('.source-card');
+  if(src)src.classList.add('settings-item');
+
+  let show=true;
+  try{const v=localStorage.getItem('cvtShowSettings');if(v!==null)show=v==='1';}catch(e){}
+  const sw=document.getElementById('settingsSwitch');
+  const apply=()=>{document.body.classList.toggle('settings-hidden',!show);sw.checked=show;};
+  apply();
+
+  row.addEventListener('click',e=>{
+    if(e.target.tagName==='INPUT')return;
+    sw.checked=!sw.checked;
+    sw.dispatchEvent(new Event('change'));
+  });
+  sw.addEventListener('change',()=>{
+    show=sw.checked;
+    apply();
+    try{localStorage.setItem('cvtShowSettings',show?'1':'0');}catch(e){}
+    toast(show?'Настройки видны':'Настройки скрыты');
+  });
+})();
 </script>
 </body>
 </html>
