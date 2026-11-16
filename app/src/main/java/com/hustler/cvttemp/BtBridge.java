@@ -51,7 +51,7 @@ public class BtBridge {
         main.post(() -> web.evaluateJavascript(script, null));
     }
 
-    private void showToas(String msg) {
+    private void showToast(String msg) {
         main.post(() -> Toast.makeText(act, msg, Toast.LENGTH_SHORT).show());
     }
 
@@ -108,9 +108,7 @@ public class BtBridge {
     }
 
     @JavascriptInterface
-    public void disconnect() {
-        io.execute(elm::close);
-    }
+    public void disconnect() { io.execute(elm::close); }
 
     @JavascriptInterface
     public boolean isConnected() { return elm.isConnected(); }
@@ -175,6 +173,7 @@ public class BtBridge {
 
     @JavascriptInterface
     public void toast(String msg) { showToast(String.valueOf(msg)); }
+
     /** Сохранение CSV в публичную папку Download. */
     @JavascriptInterface
     public String saveCsv(String name, String content) {
