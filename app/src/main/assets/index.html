@@ -51,11 +51,16 @@ main{display:grid;gap:12px;padding:12px;max-width:1180px;margin:0 auto;grid-temp
 .tb-label small{display:block;font-size:10px;color:var(--muted);margin-top:2px}
 .tb-zone{font:700 10px system-ui;letter-spacing:.14em;color:var(--bz);border:1px solid var(--bz);padding:4px 10px;border-radius:99px;white-space:nowrap;background:rgba(255,255,255,.03);transition:.4s}
 .tb-main{display:flex;align-items:center;gap:20px}
-.tb-digits{font:700 clamp(58px,15vw,96px)/1 system-ui;font-variant-numeric:tabular-nums;color:var(--bz);transform:scale(var(--scale));transform-origin:left center;white-space:nowrap;text-shadow:0 0 calc(22px * var(--glow)) var(--bz);transition:color .5s,opacity .3s,text-shadow .5s}
-.tb-digits>span:first-child{display:inline-block;min-width:2.8ch;text-align:right}
-.tb-digits.rpm-digits>span:first-child{min-width:4ch}
-.tb-digits .unit{font-size:.3em;color:var(--muted);vertical-align:super;margin-left:2px}
+.tb-digits{--dh:clamp(56px,15vw,86px);display:flex;align-items:flex-start;gap:calc(var(--dh)*.06);font-size:var(--dh);line-height:1;color:var(--bz);transform:scale(var(--scale)) skewX(var(--slant,-6deg));transform-origin:left center;filter:drop-shadow(0 0 calc(6px * var(--glow)) var(--bz));transition:color .5s,filter .4s,opacity .3s}
+.dgs{display:flex;align-items:flex-start;gap:calc(var(--dh)*.07)}
+.dg{display:block;width:calc(var(--dh)*.5789);height:var(--dh);flex:none}
+.sg{fill:currentColor;opacity:var(--ghost,.075)}
+.sg.on{opacity:1}
+.deg{display:block;width:calc(var(--dh)*.22);height:calc(var(--dh)*.22);margin-top:calc(var(--dh)*.03);flex:none}
+.tb-digits .unit{font-size:.2em;font-weight:700;color:var(--muted);margin-top:calc(var(--dh)*.02);white-space:nowrap}
 .tb-digits.stale{opacity:.42}
+.tb-digits.alarm{animation:segpulse 1.05s ease-in-out infinite}
+@keyframes segpulse{0%,100%{opacity:1}50%{opacity:.45}}
 .tb-barwrap{flex:1;min-width:0}
 .tb-bar{position:relative;height:17px;border-radius:99px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 4px rgba(0,0,0,.45)}
 .tb-fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#3fd9ff,#57e389 42%,#ffb020 74%,#ff4040);width:0%;transition:width .8s ease,box-shadow .5s;box-shadow:0 0 calc(12px * var(--glow)) var(--bz)}
@@ -107,7 +112,7 @@ input[type=range].r-rpm::-webkit-slider-thumb{border-color:var(--rpm)}
 .chart-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .legend{display:flex;gap:10px;font-size:10px;color:var(--muted);flex-wrap:wrap}
 .legend i{display:inline-block;width:14px;height:0;border-top:3px solid var(--cool);vertical-align:middle;margin-right:4px;border-radius:2px}
-.legend i.e{border-color:var(--eng)}.legend i.t{border-top-style:dashed;border-color:var(--muted)}
+.legend i.e{border-color:var(--eng)}.legend i.t{border-top-style:dashed;border-color:var(--muted)}.legend i.r{border-color:var(--rpm)}
 #chart{width:100%;height:170px;display:block;margin-top:8px}
 .source-card{order:5}
 .srcgroup{font:700 9px system-ui;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin:10px 0 7px;display:flex;align-items:center;gap:6px}
@@ -160,14 +165,13 @@ body.widget-open{overflow:hidden}
 .w-tile.engine{--accent:var(--eng)}
 .w-tile.rpm{--accent:var(--rpm)}
 .w-tile .tb-icon{width:32px;height:32px}
-.w-digits{text-align:center;transform-origin:center;margin:4px 0 10px;font-size:clamp(60px,17vw,120px)}
-.w-digits>span:first-child{text-align:center;min-width:2.6ch}
-.w-digits.rpm-digits>span:first-child{min-width:4ch}
+.w-digits{--dh:clamp(62px,18vw,120px);justify-content:center;transform-origin:center;margin:6px 0 12px}
 #wChart{width:100%;height:60px;flex:none;display:block}
-@media(min-width:760px){.w-tiles{grid-template-columns:1fr 1fr 1fr}.w-digits{font-size:clamp(46px,8vw,90px)}}
-@media(orientation:landscape) and (max-height:520px){#widgetView{padding:9px;gap:7px}.w-tiles{grid-template-columns:1fr 1fr 1fr;gap:8px}.w-tile{padding:10px}.w-tile .tb-top{margin-bottom:4px}.w-tile .tb-icon{width:26px;height:26px}.w-tile .tb-label small{display:none}.w-digits{font-size:clamp(40px,11vh,80px);margin:2px 0 6px}#wChart{height:34px}}
+@media(min-width:760px){.w-tiles{grid-template-columns:1fr 1fr 1fr}.w-digits{--dh:clamp(38px,6.5vw,76px)}}
+@media(orientation:landscape) and (max-height:520px){#widgetView{padding:9px;gap:7px}.w-tiles{grid-template-columns:1fr 1fr 1fr;gap:8px}.w-tile{padding:10px}.w-tile .tb-top{margin-bottom:4px}.w-tile .tb-icon{width:26px;height:26px}.w-tile .tb-label small{display:none}.w-digits{--dh:clamp(32px,10vh,70px);margin:2px 0 8px}#wChart{height:34px}}
 @media(min-width:960px){main{grid-template-columns:1.12fr .88fr;align-items:start}.temp-card{grid-column:1;grid-row:1}.chart-card{grid-column:1;grid-row:2}.controls-card{grid-column:1;grid-row:3}.stats-card{grid-column:2;grid-row:1}.source-card{grid-column:2;grid-row:2}.log-card{grid-column:2;grid-row:3}.help{grid-column:1/-1;grid-row:4}}
-@media(max-width:560px){.tb-main{flex-direction:column;align-items:stretch;gap:10px}.tb-digits{transform-origin:center;text-align:center;font-size:clamp(60px,18vw,100px)}.tb-digits>span:first-child{text-align:center}.tb-icon{width:34px;height:34px}.tb-label b{font-size:12px}.fgrid{grid-template-columns:1fr}.brand small{display:none}}
+@media(max-width:560px){.tb-main{flex-direction:column;align-items:stretch;gap:12px}.tb-digits{--dh:clamp(58px,16vw,96px);transform-origin:center;justify-content:center}.tb-icon{width:34px;height:34px}.tb-label b{font-size:12px}.fgrid{grid-template-columns:1fr}.brand small{display:none}}
+@media(prefers-reduced-motion:reduce){.blob,.card,.tb-digits.alarm,body.danger #vignette{animation:none}}
 </style>
 </head>
 <body>
@@ -176,7 +180,7 @@ body.widget-open{overflow:hidden}
 <header>
   <div class="brand">
     <svg viewBox="0 0 24 24" fill="none"><path d="M3 15a9 9 0 1 1 18 0" stroke="#3fd9ff" stroke-width="2" stroke-linecap="round"/><path d="M12 15l4.2-5.4" stroke="#ff4040" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="1.8" fill="#eaf2ff"/></svg>
-    <div><b>CVT·TEMP</b><small>SUZUKI HUSTLER</small></div>
+    <div><b>RPM·CVT·ENGINE</b><small>SUZUKI HUSTLER</small></div>
   </div>
   <span class="chip demo" id="statusChip">ДЕМО</span>
   <button class="iconbtn" id="widgetBtn" title="Виджет">▣</button>
@@ -185,22 +189,24 @@ body.widget-open{overflow:hidden}
 </header>
 <main>
   <section class="card temp-card" style="--d:.05s">
-    <h2>Показатели</h2>
+
 
     <div class="temp-block rpm" id="rpmTile">
       <div class="tb-top"><div class="tb-label">
         <svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 23a12 12 0 1 1 24 0"/><path d="M16 23l7-8"/><circle cx="16" cy="23" r="2" fill="currentColor" stroke="none"/><path d="M6 17h2M24 17h2M16 8v2"/></svg>
-        <div><b>ОБОРОТЫ</b><small>двигатель · об/мин</small></div></div><span class="tb-zone" id="rpmZone">НОРМА</span></div>
-      <div class="tb-main"><div class="tb-digits rpm-digits"><span id="rpmTemp">--</span><span class="unit">об/мин</span></div>
+        <div><b>ОБОРОТЫ</b></div></div><span class="tb-zone" id="rpmZone">НОРМА</span></div>
+      <div class="tb-main">
+        <div class="tb-digits"><span class="dgs" id="rpmDigits"></span><span class="unit">об/мин</span></div>
         <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="rpmFill"></div><i class="tb-tick warn" id="rpmTickWarn"></i><i class="tb-tick danger" id="rpmTickDanger"></i><i class="tb-marker" id="rpmMarker" style="display:none"></i></div>
-        <div class="tb-scale"><span>0</span><span>2000</span><span>4000</span><span>6000</span><span>8000</span></div></div></div>
+        <div class="tb-scale"><span>0</span><span>1500</span><span>1750</span><span>5250</span><span>7000</span></div></div></div>
     </div>
 
     <div class="temp-block" id="cvtTile">
       <div class="tb-top"><div class="tb-label">
         <svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h12a8 8 0 0 1 0 16H10a8 8 0 0 1 0-16z"/><circle cx="10" cy="16" r="4.5"/><circle cx="22" cy="16" r="4.5"/><circle cx="10" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="22" cy="16" r="1.4" fill="currentColor" stroke="none"/><path d="M14.5 16h3" opacity=".6"/></svg>
-        <div><b>ВАРИАТОР</b><small>масло CVT · Jatco</small></div></div><span class="tb-zone" id="cvtZone">НОРМА</span></div>
-      <div class="tb-main"><div class="tb-digits"><span id="cvtTemp">--</span><span class="unit">°C</span></div>
+        <div><b>ВАРИАТОР</b></div></div><span class="tb-zone" id="cvtZone">НОРМА</span></div>
+      <div class="tb-main">
+        <div class="tb-digits"><span class="dgs" id="cvtDigits"></span><span class="unit">C</span></div>
         <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="cvtFill"></div><i class="tb-tick warn" id="cvtTickWarn"></i><i class="tb-tick danger" id="cvtTickDanger"></i><i class="tb-marker" id="cvtMarker" style="display:none"></i></div>
         <div class="tb-scale"><span>0°</span><span>40°</span><span>80°</span><span>120°</span><span>150°</span></div></div></div>
     </div>
@@ -208,17 +214,20 @@ body.widget-open{overflow:hidden}
     <div class="temp-block engine" id="engTile">
       <div class="tb-top"><div class="tb-label">
         <svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M9 10h9l3 3h4v4h3v6h-3v3H12l-3-3H6v-4H3v-5h3v-3h3z"/><path d="M12 5h7M15.5 5v5"/></svg>
-        <div><b>ДВИГАТЕЛЬ</b><small>охлаждающая жидкость</small></div></div><span class="tb-zone" id="engZone">НОРМА</span></div>
-      <div class="tb-main"><div class="tb-digits"><span id="engTemp">--</span><span class="unit">°C</span></div>
+        <div><b>ДВИГАТЕЛЬ</b></div></div><span class="tb-zone" id="engZone">НОРМА</span></div>
+      <div class="tb-main">
+        <div class="tb-digits"><span class="dgs" id="engDigits"></span><span class="unit">C</span></div>
         <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="engFill"></div><i class="tb-tick warn" id="engTickWarn"></i><i class="tb-tick danger" id="engTickDanger"></i><i class="tb-marker" id="engMarker" style="display:none"></i></div>
         <div class="tb-scale"><span>40°</span><span>60°</span><span>80°</span><span>100°</span><span>120°</span></div></div></div>
     </div>
   </section>
 
   <section class="card chart-card" style="--d:.12s">
-    <div class="chart-head"><h2 style="margin:0">История · 3 мин</h2>
-      <div class="legend"><span><i></i>Вариатор</span><span><i class="e"></i>Двигатель</span><span><i class="t"></i>пороги</span></div></div>
-    <canvas id="chart"></canvas>
+    <div class="chart-head">
+  <h2 style="margin:0">История · 3 мин</h2>
+  <div class="legend"><span><i class="r"></i>RPM</span><span><i></i>CVT</span><span><i class="e"></i>ICE</span></div>
+</div>
+<canvas id="chart"></canvas>
   </section>
 
   <section class="card stats-card" style="--d:.18s">
@@ -232,14 +241,16 @@ body.widget-open{overflow:hidden}
     <h2>Пульт управления</h2>
     <button class="btn primary wide" id="connectBtn">⚡ Подключить адаптер</button>
     <div class="ctl tappable" data-toggle="demoSwitch"><label>Демо</label><span class="switch"><input type="checkbox" id="demoSwitch" checked><i></i></span></div>
-    <div class="ctl tappable" data-toggle="wakeSwitch"><label>Экран не гаснет<small>нажмите на строку</small></label><span class="switch"><input type="checkbox" id="wakeSwitch"><i></i></span></div>
-    <div class="ctl"><label>Обороты · порог<small>об/мин</small></label><input type="range" id="rpmWarnRange" class="r-rpm" min="2000" max="6500" step="100" value="4500"><span class="val" id="rpmWarnVal">4500</span></div>
-    <div class="ctl"><label>CVT · горячо<small>°C</small></label><input type="range" id="warnRange" class="r-warn" min="70" max="105" value="90"><span class="val" id="warnVal">90°</span></div>
-    <div class="ctl"><label>CVT · перегрев<small>°C</small></label><input type="range" id="dangerRange" class="r-danger" min="100" max="130" value="110"><span class="val" id="dangerVal">110°</span></div>
-    <div class="ctl"><label>ДВС · горячо<small>°C</small></label><input type="range" id="engWarnRange" class="r-warn" min="85" max="110" value="100"><span class="val" id="engWarnVal">100°</span></div>
-    <div class="ctl"><label>ДВС · перегрев<small>°C</small></label><input type="range" id="engDangerRange" class="r-danger" min="105" max="130" value="112"><span class="val" id="engDangerVal">112°</span></div>
-    <div class="ctl"><label>Размер цифр<small>масштаб</small></label><input type="range" id="scaleRange" min="60" max="125" value="100"><span class="val" id="scaleVal">100%</span></div>
-    <div class="ctl"><label>Свечение цифр<small>яркость подсветки</small></label><input type="range" id="glowRange" min="0" max="200" value="100"><span class="val" id="glowVal">100%</span></div>
+    <div class="ctl tappable" data-toggle="wakeSwitch"><label>Экран не гаснет</label><span class="switch"><input type="checkbox" id="wakeSwitch"><i></i></span></div>
+    <div class="ctl"><label>Обороты · порог</label><input type="range" id="rpmWarnRange" class="r-rpm" min="0" max="5800" step="100" value="4500"><span class="val" id="rpmWarnVal">4500</span></div>
+    <div class="ctl"><label>CVT · горячо</label><input type="range" id="warnRange" class="r-warn" min="70" max="105" value="90"><span class="val" id="warnVal">90°</span></div>
+    <div class="ctl"><label>CVT · перегрев</label><input type="range" id="dangerRange" class="r-danger" min="100" max="130" value="110"><span class="val" id="dangerVal">110°</span></div>
+    <div class="ctl"><label>ДВС · горячо</label><input type="range" id="engWarnRange" class="r-warn" min="85" max="110" value="100"><span class="val" id="engWarnVal">100°</span></div>
+    <div class="ctl"><label>ДВС · перегрев</label><input type="range" id="engDangerRange" class="r-danger" min="105" max="130" value="112"><span class="val" id="engDangerVal">112°</span></div>
+    <div class="ctl"><label>Размер цифр</label><input type="range" id="scaleRange" min="60" max="125" value="100"><span class="val" id="scaleVal">100%</span></div>
+    <div class="ctl"><label>Свечение цифр</label><input type="range" id="glowRange" min="0" max="200" value="100"><span class="val" id="glowVal">100%</span></div>
+    <div class="ctl"><label>Наклон цифр</label><input type="range" id="slantRange" min="-14" max="0" value="-6"><span class="val" id="slantVal">-6°</span></div>
+    <div class="ctl"><label>Выключ. сегменты</label><input type="range" id="ghostRange" min="0" max="30" value="2"><span class="val" id="ghostVal">8%</span></div>
     <div class="btnrow"><button class="btn" id="resetBtn">↺ Сброс</button><button class="btn" id="csvBtn">⤓ CSV</button><button class="btn" id="widgetBtn2">▣ Виджет</button></div>
   </section>
 
@@ -280,7 +291,7 @@ body.widget-open{overflow:hidden}
     </ol>
   </details>
 </main>
-<footer>CVT·TEMP v6.1 · единая цветовая шкала</footer>
+<footer>CVT·TEMP v7.0</footer>
 <div id="toast"></div>
 
 <div id="devicePicker"><div class="picker-card">
@@ -289,18 +300,18 @@ body.widget-open{overflow:hidden}
 </div></div>
 
 <div id="widgetView" hidden>
-  <div class="w-head"><div class="w-brand"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15a9 9 0 1 1 18 0" stroke="#3fd9ff" stroke-width="2" stroke-linecap="round"/><path d="M12 15l4.2-5.4" stroke="#ff4040" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="1.8" fill="#eaf2ff"/></svg>CVT·TEMP</div>
+  <div class="w-head"><div class="w-brand"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15a9 9 0 1 1 18 0" stroke="#3fd9ff" stroke-width="2" stroke-linecap="round"/><path d="M12 15l4.2-5.4" stroke="#ff4040" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="1.8" fill="#eaf2ff"/></svg>RPM·CVT·ENGINE</div>
     <span class="chip demo" id="wStatusChip">ДЕМО</span>
     <div class="w-actions"><button class="iconbtn" id="wConnectBtn">⚡</button><button class="iconbtn" id="wSoundBtn">🔊</button><button class="iconbtn" id="wFsBtn">⛶</button><button class="iconbtn" id="wExitBtn">✕</button></div></div>
   <div class="w-tiles">
     <div class="w-tile rpm" id="wRpmTile"><div class="tb-top"><div class="tb-label"><svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 23a12 12 0 1 1 24 0"/><path d="M16 23l7-8"/><circle cx="16" cy="23" r="2" fill="currentColor" stroke="none"/></svg><div><b>ОБОРОТЫ</b></div></div><span class="tb-zone" id="wRpmZone">НОРМА</span></div>
-      <div class="tb-digits w-digits rpm-digits"><span id="wRpmTemp">--</span><span class="unit">об/мин</span></div>
-      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wRpmFill"></div><i class="tb-tick warn" id="wRpmTickWarn"></i><i class="tb-tick danger" id="wRpmTickDanger"></i><i class="tb-marker" id="wRpmMarker" style="display:none"></i></div><div class="tb-scale"><span>0</span><span>4000</span><span>8000</span></div></div></div>
+      <div class="tb-digits w-digits"><span class="dgs" id="wRpmDigits"></span><span class="unit">об/мин</span></div>
+      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wRpmFill"></div><i class="tb-tick warn" id="wRpmTickWarn"></i><i class="tb-tick danger" id="wRpmTickDanger"></i><i class="tb-marker" id="wRpmMarker" style="display:none"></i></div><div class="tb-scale"><span>0</span><span>3500</span><span>7000</span></div></div></div>
     <div class="w-tile" id="wCvtTile"><div class="tb-top"><div class="tb-label"><svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h12a8 8 0 0 1 0 16H10a8 8 0 0 1 0-16z"/><circle cx="10" cy="16" r="4.5"/><circle cx="22" cy="16" r="4.5"/><circle cx="10" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="22" cy="16" r="1.4" fill="currentColor" stroke="none"/></svg><div><b>ВАРИАТОР</b></div></div><span class="tb-zone" id="wCvtZone">НОРМА</span></div>
-      <div class="tb-digits w-digits"><span id="wCvtTemp">--</span><span class="unit">°C</span></div>
+      <div class="tb-digits w-digits"><span class="dgs" id="wCvtDigits"></span><span class="unit">C</span></div>
       <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wCvtFill"></div><i class="tb-tick warn" id="wCvtTickWarn"></i><i class="tb-tick danger" id="wCvtTickDanger"></i><i class="tb-marker" id="wCvtMarker" style="display:none"></i></div><div class="tb-scale"><span>0°</span><span>80°</span><span>150°</span></div></div></div>
     <div class="w-tile engine" id="wEngTile"><div class="tb-top"><div class="tb-label"><svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M9 10h9l3 3h4v4h3v6h-3v3H12l-3-3H6v-4H3v-5h3v-3h3z"/><path d="M12 5h7M15.5 5v5"/></svg><div><b>ДВИГАТЕЛЬ</b></div></div><span class="tb-zone" id="wEngZone">НОРМА</span></div>
-      <div class="tb-digits w-digits"><span id="wEngTemp">--</span><span class="unit">°C</span></div>
+      <div class="tb-digits w-digits"><span class="dgs" id="wEngDigits"></span><span class="unit">C</span></div>
       <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wEngFill"></div><i class="tb-tick warn" id="wEngTickWarn"></i><i class="tb-tick danger" id="wEngTickDanger"></i><i class="tb-marker" id="wEngMarker" style="display:none"></i></div><div class="tb-scale"><span>40°</span><span>80°</span><span>120°</span></div></div></div>
   </div>
   <canvas id="wChart"></canvas>
@@ -310,16 +321,84 @@ body.widget-open{overflow:hidden}
 'use strict';
 const $=s=>document.querySelector(s),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),round1=v=>Math.round(v*10)/10,sleep=ms=>new Promise(r=>setTimeout(r,ms)),HEX=/^[0-9A-F]+$/;
 const NATIVE=!!window.AndroidBT;
+
+/* ================= СЕМИСЕГМЕНТНЫЙ ИНДИКАТОР ================= */
+const NS='http://www.w3.org/2000/svg';
+const SEG={
+  a:"6,5 10.5,0.5 33.5,0.5 38,5 33.5,9.5 10.5,9.5",
+  b:"39,6 43.5,10.5 43.5,32.5 39,37 34.5,32.5 34.5,10.5",
+  c:"39,39 43.5,43.5 43.5,65.5 39,70 34.5,65.5 34.5,43.5",
+  d:"6,71 10.5,66.5 33.5,66.5 38,71 33.5,75.5 10.5,75.5",
+  e:"5,39 9.5,43.5 9.5,65.5 5,70 0.5,65.5 0.5,43.5",
+  f:"5,6 9.5,10.5 9.5,32.5 5,37 0.5,32.5 0.5,10.5",
+  g:"6,38 10.5,33.5 33.5,33.5 38,38 33.5,42.5 10.5,42.5"
+};
+const MAP={'0':'abcdef','1':'bc','2':'abged','3':'abgcd','4':'fgbc','5':'afgcd','6':'afgedc','7':'abc','8':'abcdefg','9':'abcfgd','-':'g',' ':''};
+const SLOTS={cvt:3,eng:3,rpm:4};
+function digitSVG(ch){
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('viewBox','0 0 44 76');svg.setAttribute('class','dg');
+  const on=MAP[ch]||'';
+  for(const name of 'abcdefg'){
+    const p=document.createElementNS(NS,'polygon');
+    p.setAttribute('points',SEG[name]);
+    p.setAttribute('class','sg'+(on.includes(name)?' on':''));
+    svg.appendChild(p);
+  }
+  return svg;
+}
+function degreeSVG(){
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('viewBox','0 0 10 10');svg.setAttribute('class','deg');
+  const c=document.createElementNS(NS,'circle');
+  c.setAttribute('cx','5');c.setAttribute('cy','5');c.setAttribute('r','3.4');
+  c.setAttribute('fill','none');c.setAttribute('stroke','currentColor');c.setAttribute('stroke-width','2.2');
+  svg.appendChild(c);return svg;
+}
+function blankLeading(s){
+  let out='',started=false;
+  for(let i=0;i<s.length;i++){
+    const ch=s[i];
+    if(ch==='-'){out+='-';continue;}
+    if(ch==='0'&&!started&&i<s.length-1)out+=' ';
+    else{started=true;out+=ch;}
+  }
+  return out;
+}
+const fmtTemp=v=>{
+  const r=Math.round(v);
+  if(r<0){
+    const a=Math.abs(r);
+    return a<10?' -'+a:'-'+String(a);
+  }
+  return blankLeading(String(r).padStart(3,'0'));
+};
+const fmtRpm=v=>blankLeading(String(clamp(Math.round(v),0,9999)).padStart(4,'0'));
+let boot=true;
+function renderDigits(el,val,ch){
+  const slots=SLOTS[ch],isTemp=ch!=='rpm';
+  let str;
+  if(boot)str='8'.repeat(slots);
+  else if(val==null)str=' '.repeat(slots-1)+'-';
+  else str=isTemp?fmtTemp(val):fmtRpm(val);
+  if(el.dataset.cache===str)return;
+  el.dataset.cache=str;
+  el.textContent='';
+  for(const c of str)el.appendChild(digitSVG(c));
+  if(isTemp)el.appendChild(degreeSVG());
+}
+
+/* ================= СОСТОЯНИЕ ================= */
 const ZONES={cool:{rank:0,label:'ХОЛОДНЫЙ',color:'#3fd9ff'},ok:{rank:1,label:'НОРМА',color:'#57e389'},warn:{rank:2,label:'ГОРЯЧО',color:'#ffb020'},danger:{rank:3,label:'ПЕРЕГРЕВ',color:'#ff4040'}};
 const RZ={low:{rank:0,label:'ХОЛОСТОЙ',color:'#3fd9ff'},ok:{rank:1,label:'НОРМА',color:'#57e389'},warn:{rank:2,label:'ВЫСОКИЕ',color:'#ffb020'},danger:{rank:3,label:'ОТСЕЧКА',color:'#ff4040'}};
-const RANGE={cvt:{min:0,max:150},eng:{min:40,max:130},rpm:{min:0,max:8000}};
+const RANGE={cvt:{min:0,max:150},eng:{min:40,max:130},rpm:{min:0,max:7000}};
 const PRESETS=[{header:'7E1',req:'2104',byte:0,offset:-50},{header:'7E2',req:'2104',byte:0,offset:-50}];
 const ENG_DEF={header:'7E0',req:'0105',byte:0,offset:-40};
 const RPM_SRC={header:'7E0',req:'010C'};
 const newStat=()=>({min:Infinity,max:-Infinity,sum:0,n:0,hot:0,ovh:0,zoneRank:-1,lastAlarm:0});
-const state={mode:'demo',cvt:null,eng:null,rpm:null,history:[],stats:{cvt:newStat(),eng:newStat(),rpm:newStat()},lastOk:{cvt:0,eng:0,rpm:0},link:{cvt:false,eng:false},zone:{cvt:ZONES.ok,eng:ZONES.ok,rpm:RZ.ok},warn:90,danger:110,engWarn:100,engDanger:112,rpmWarn:4500,sound:true,verbose:false,proto:'6',scale:1,glow:1,keepAwake:false,src:{cvt:{...PRESETS[0]},eng:{...ENG_DEF}}};
+const state={mode:'demo',cvt:null,eng:null,rpm:null,history:[],stats:{cvt:newStat(),eng:newStat(),rpm:newStat()},lastOk:{cvt:0,eng:0,rpm:0},link:{cvt:false,eng:false},zone:{cvt:ZONES.ok,eng:ZONES.ok,rpm:RZ.ok},warn:90,danger:110,engWarn:100,engDanger:112,rpmWarn:4500,sound:true,verbose:false,proto:'6',scale:1,glow:1,slant:-6,ghost:8,keepAwake:false,src:{cvt:{...PRESETS[0]},eng:{...ENG_DEF}}};
 let widgetOpen=false;
-function blockRefs(p){return{root:$('#'+p+'Tile'),temp:$('#'+p+'Temp'),zone:$('#'+p+'Zone'),fill:$('#'+p+'Fill'),marker:$('#'+p+'Marker'),tickW:$('#'+p+'TickWarn'),tickD:$('#'+p+'TickDanger')};}
+function blockRefs(p){return{root:$('#'+p+'Tile'),digits:$('#'+p+'Digits'),zone:$('#'+p+'Zone'),fill:$('#'+p+'Fill'),marker:$('#'+p+'Marker'),tickW:$('#'+p+'TickWarn'),tickD:$('#'+p+'TickDanger')};}
 const B={cvt:blockRefs('cvt'),eng:blockRefs('eng'),rpm:blockRefs('rpm'),wCvt:blockRefs('wCvt'),wEng:blockRefs('wEng'),wRpm:blockRefs('wRpm')};
 const logBox=$('#logBox');
 function log(msg,cls){const d=document.createElement('div');if(cls)d.className=cls;const t=new Date(),p=n=>String(n).padStart(2,'0');d.textContent='['+p(t.getHours())+':'+p(t.getMinutes())+':'+p(t.getSeconds())+'] '+msg;logBox.appendChild(d);while(logBox.children.length>240)logBox.removeChild(logBox.firstChild);if(logBox.scrollHeight-logBox.scrollTop-logBox.clientHeight<60)logBox.scrollTop=logBox.scrollHeight;}
@@ -334,33 +413,70 @@ function thresholds(ch){return ch==='cvt'?{cool:45,warn:state.warn,danger:state.
 function zoneOf(t,ch){const th=thresholds(ch);return t<th.cool?ZONES.cool:t<th.warn?ZONES.ok:t<th.danger?ZONES.warn:ZONES.danger;}
 function rpmZone(v){const w=state.rpmWarn,d=w+1200;return v<1200?RZ.low:v<w?RZ.ok:v<d?RZ.warn:RZ.danger;}
 function updateTicks(){[['cvt',state.warn,state.danger],['eng',state.engWarn,state.engDanger],['rpm',state.rpmWarn,state.rpmWarn+1200]].forEach(([ch,w,d])=>{const g=RANGE[ch];[B[ch],B['w'+ch.charAt(0).toUpperCase()+ch.slice(1)]].forEach(r=>{if(!r)return;r.tickW.style.left=pct(w,g)+'%';r.tickD.style.left=pct(d,g)+'%';});});}
-function paintBlock(r,ch,t,z,stale){const g=RANGE[ch],col=t==null?'#93a7c9':z.color;
- r.root.style.setProperty('--bz',col);
- r.temp.textContent=t==null?'--':Math.round(t);r.temp.parentElement.classList.toggle('stale',stale);
- r.zone.textContent=t==null?'НЕТ ДАННЫХ':(stale?'НЕТ СВЯЗИ':z.label);r.zone.style.color=col;r.zone.style.borderColor=col;
- if(t==null){r.fill.style.width='0%';r.marker.style.display='none';}
- else{const p=pct(t,g);r.fill.style.width=p+'%';r.marker.style.left=p+'%';r.marker.style.display='block';r.marker.style.borderColor=col;}}
+function paintBlock(r,ch,t,z,stale){
+  const g=RANGE[ch],col=t==null?'#93a7c9':z.color;
+  r.root.style.setProperty('--bz',col);
+  renderDigits(r.digits,t,ch);
+  const box=r.digits.parentElement;
+  box.classList.toggle('stale',stale);
+  box.classList.toggle('alarm',!boot&&t!=null&&z.rank===3);
+  r.zone.textContent=t==null?'НЕТ ДАННЫХ':(stale?'НЕТ СВЯЗИ':z.label);r.zone.style.color=col;r.zone.style.borderColor=col;
+  if(t==null){r.fill.style.width='0%';r.marker.style.display='none';}
+  else{const p=pct(t,g);r.fill.style.width=p+'%';r.marker.style.left=p+'%';r.marker.style.display='block';r.marker.style.borderColor=col;}
+}
 const chart=$('#chart'),wChart=$('#wChart');
+
 function prepCanvas(c,hDef){const ctx=c.getContext('2d'),w=c.clientWidth||300,h=c.clientHeight||hDef,dpr=Math.min(2,window.devicePixelRatio||1);if(c.width!==Math.round(w*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);return{ctx,w,h};}
-function drawChart(){const{ctx,w,h}=prepCanvas(chart,170),data=state.history.slice(-180);if(data.length<2){ctx.fillStyle='#93a7c9';ctx.font='12px system-ui';ctx.fillText('Нет данных…',12,h/2);return;}
- let lo=1e9,hi=-1e9;data.forEach(d=>{if(d.c!=null){lo=Math.min(lo,d.c);hi=Math.max(hi,d.c);}if(d.e!=null){lo=Math.min(lo,d.e);hi=Math.max(hi,d.e);}});if(lo>hi)return;
- lo=Math.min(30,lo)-6;hi=Math.max(state.danger+8,state.engDanger+8,hi)+6;
- const X=i=>8+(w-16)*i/(data.length-1),Y=t=>h-16-(h-30)*(t-lo)/(hi-lo);
- [{v:state.warn,c:'#ffb020',dash:[5,5],label:'CVT '+state.warn},{v:state.danger,c:'#ff4040',dash:[5,5],label:'CVT '+state.danger},{v:state.engDanger,c:'#ff4fd8',dash:[2,4],label:'ДВС '+state.engDanger}].forEach(L=>{if(L.v>lo&&L.v<hi){ctx.save();ctx.setLineDash(L.dash);ctx.strokeStyle=L.c;ctx.globalAlpha=.55;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(8,Y(L.v));ctx.lineTo(w-8,Y(L.v));ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle=L.c;ctx.font='9px system-ui';ctx.fillText(L.label+'°',w-56,Y(L.v)-4);ctx.restore();}});
- function series(key,color){ctx.strokeStyle=color;ctx.lineWidth=2.4;ctx.lineJoin='round';ctx.beginPath();let st=false;data.forEach((d,i)=>{const v=d[key];if(v==null){st=false;return;}if(!st){ctx.moveTo(X(i),Y(v));st=true;}else ctx.lineTo(X(i),Y(v));});ctx.stroke();}
- series('c','#3fd9ff');series('e','#ff9f43');
- [['c','#3fd9ff','CVT',-9],['e','#ff9f43','ДВС',14]].forEach(([key,col,name,dy])=>{let li=-1;for(let i=data.length-1;i>=0;i--){if(data[i][key]!=null){li=i;break;}}if(li<0)return;const v=data[li][key],lx=X(li),ly=Y(v);ctx.fillStyle=col;ctx.beginPath();ctx.arc(lx,ly,4,0,7);ctx.fill();ctx.font='700 11px system-ui';const label=name+' '+Math.round(v)+'°',tw=ctx.measureText(label).width;ctx.fillText(label,Math.max(8,lx-tw-10),clamp(ly+dy,12,h-6));});}
-function drawWidgetChart(){if(!widgetOpen)return;const{ctx,w,h}=prepCanvas(wChart,60),data=state.history.slice(-90);if(data.length<2)return;
- let lo=1e9,hi=-1e9;data.forEach(d=>{if(d.c!=null){lo=Math.min(lo,d.c);hi=Math.max(hi,d.c);}if(d.e!=null){lo=Math.min(lo,d.e);hi=Math.max(hi,d.e);}});if(lo>hi)return;lo-=5;hi+=5;
- const X=i=>4+(w-8)*i/(data.length-1),Y=t=>h-6-(h-12)*(t-lo)/(hi-lo);
- function line(key,col){ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();let st=false;data.forEach((d,i)=>{const v=d[key];if(v==null){st=false;return;}if(!st){ctx.moveTo(X(i),Y(v));st=true;}else ctx.lineTo(X(i),Y(v));});ctx.stroke();}
- line('c','#3fd9ff');line('e','#ff9f43');}
+const RPM_FULL=5000;
+function drawChart(){
+  const{ctx,w,h}=prepCanvas(chart,170),data=state.history.slice(-180);
+  if(data.length<2){ctx.fillStyle='#93a7c9';ctx.font='12px system-ui';ctx.fillText('Нет данных…',12,h/2);return;}
+  let lo=1e9,hi=-1e9;
+  data.forEach(d=>{
+    if(d.c!=null){lo=Math.min(lo,d.c);hi=Math.max(hi,d.c);}
+    if(d.e!=null){lo=Math.min(lo,d.e);hi=Math.max(hi,d.e);}
+  });
+  if(lo>hi)return;
+  lo=Math.min(30,lo)-6;
+  hi=hi+6;
+  const X=i=>8+(w-16)*i/(data.length-1);
+  const Y=t=>h-16-(h-30)*(t-lo)/(hi-lo);
+  const YR=v=>h-16-(h-30)*(clamp(v,0,RPM_FULL)/RPM_FULL);
+  function series(key,color,Yf,lw){ctx.strokeStyle=color;ctx.lineWidth=lw||2.4;ctx.lineJoin='round';ctx.beginPath();let st=false;data.forEach((d,i)=>{const v=d[key];if(v==null){st=false;return;}const y=Yf(v);if(!st){ctx.moveTo(X(i),y);st=true;}else ctx.lineTo(X(i),y);});ctx.stroke();}
+  series('c','#3fd9ff',Y);
+  series('e','#ff9f43',Y);
+  series('r','#a78bfa',YR,2);
+  [['c','#3fd9ff','',-9],['e','#ff9f43','',14]].forEach(([key,col,name,dy])=>{let li=-1;for(let i=data.length-1;i>=0;i--){if(data[i][key]!=null){li=i;break;}}if(li<0)return;const v=data[li][key],lx=X(li),ly=Y(v);ctx.fillStyle=col;ctx.beginPath();ctx.arc(lx,ly,4,0,7);ctx.fill();ctx.font='700 11px system-ui';const label=name+' '+Math.round(v)+'°',tw=ctx.measureText(label).width;ctx.fillText(label,Math.max(8,lx-tw-10),clamp(ly+dy,12,h-6));});
+  {let li=-1;for(let i=data.length-1;i>=0;i--){if(data[i].r!=null){li=i;break;}}
+   if(li>=0){const v=data[li].r,lx=X(li),ly=YR(v);ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.arc(lx,ly,4,0,7);ctx.fill();ctx.font='700 11px system-ui';const label=Math.round(v),tw=ctx.measureText(label).width;ctx.fillText(label,Math.max(8,lx-tw-10),clamp(ly-9,12,h-6));}}
+}
+function drawWidgetChart(){
+  if(!widgetOpen)return;
+  const{ctx,w,h}=prepCanvas(wChart,60),data=state.history.slice(-90);
+  if(data.length<2)return;
+  let lo=1e9,hi=-1e9;
+  data.forEach(d=>{
+    if(d.c!=null){lo=Math.min(lo,d.c);hi=Math.max(hi,d.c);}
+    if(d.e!=null){lo=Math.min(lo,d.e);hi=Math.max(hi,d.e);}
+  });
+  if(lo>hi)return;
+  lo-=5;hi+=5;
+  const X=i=>4+(w-8)*i/(data.length-1);
+  const Y=t=>h-6-(h-12)*(t-lo)/(hi-lo);
+  const YR=v=>h-6-(h-12)*(clamp(v,0,RPM_FULL)/RPM_FULL);
+  function line(key,col,Yf){ctx.strokeStyle=col;ctx.lineWidth=2;ctx.lineJoin='round';ctx.beginPath();let st=false;
+    data.forEach((d,i)=>{const v=d[key];if(v==null){st=false;return;}const y=Yf(v);if(!st){ctx.moveTo(X(i),y);st=true;}else ctx.lineTo(X(i),y);});
+    ctx.stroke();}
+  line('c','#3fd9ff',Y);
+  line('e','#ff9f43',Y);
+  line('r','#a78bfa',YR);
+}
 function fmtTime(s){s=Math.round(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function pushSample(c,e,rpm){const now=Date.now(),prev=state.history[state.history.length-1],dt=prev?(now-prev.ts)/1000:0;
  if(c!=null){state.cvt=c;state.lastOk.cvt=now;state.link.cvt=true;}
  if(e!=null){state.eng=e;state.lastOk.eng=now;state.link.eng=true;}
  if(rpm!=null){state.rpm=rpm;state.lastOk.rpm=now;const s=state.stats.rpm;s.n++;s.sum+=rpm;if(rpm<s.min)s.min=rpm;if(rpm>s.max)s.max=rpm;state.zone.rpm=rpmZone(rpm);}
- state.history.push({ts:now,c:state.cvt,e:state.eng});if(state.history.length>1500)state.history.shift();
+ state.history.push({ts:now,c:state.cvt,e:state.eng,r:state.rpm});if(state.history.length>1500)state.history.shift();
  [['cvt',c],['eng',e]].forEach(([ch,t])=>{if(t==null)return;const s=state.stats[ch],th=thresholds(ch),z=zoneOf(t,ch);
   s.n++;s.sum+=t;if(t<s.min)s.min=t;if(t>s.max)s.max=t;if(t>=th.warn)s.hot+=dt;
   if(z.rank>s.zoneRank&&now-s.lastAlarm>8000){if(z.rank===2){playWarn();log('⚠ '+(ch==='cvt'?'CVT':'ДВС')+' '+round1(t)+' °C','sys');}
@@ -382,9 +498,22 @@ function render(){const now=Date.now(),c=state.cvt,e=state.eng,rp=state.rpm;
 function setChip(cls,text){['#statusChip','#wStatusChip'].forEach(id=>{const c=$(id);c.className='chip '+cls;c.textContent=text;});}
 function resetSession(){state.history=[];state.stats={cvt:newStat(),eng:newStat(),rpm:newStat()};state.lastOk={cvt:0,eng:0,rpm:0};state.link={cvt:false,eng:false};state.zone={cvt:ZONES.ok,eng:ZONES.ok,rpm:RZ.ok};log('— новая сессия —','sys');render();}
 let demoTimer=null,simC=62,simE=45,simR=800,simStart=0;
-function seedDemo(){const now=Date.now();let c=34,e=38;for(let i=119;i>=0;i--){c+=(74-c)*.05+(Math.random()-.5);e+=(86-e)*.045+(Math.random()-.5)*.8;c=round1(c);e=round1(e);state.history.push({ts:now-i*1000,c,e});[['cvt',c],['eng',e]].forEach(([ch,t])=>{const s=state.stats[ch];s.n++;s.sum+=t;if(t<s.min)s.min=t;if(t>s.max)s.max=t;});}simC=c;simE=e;state.cvt=c;state.eng=e;state.rpm=simR;state.zone.cvt=zoneOf(c,'cvt');state.zone.eng=zoneOf(e,'eng');state.zone.rpm=rpmZone(simR);state.stats.cvt.zoneRank=state.zone.cvt.rank;state.stats.eng.zoneRank=state.zone.eng.rank;}
-function demoTick(){const s=(Date.now()-simStart)/1000,cyc=Math.floor(s/80)%4,ph=s%80;let tc=78+5*Math.sin(s/13),te=88+3*Math.sin(s/17),tr=1500+900*Math.abs(Math.sin(s/7));
- if(ph>50&&ph<68){tc=97+4*Math.sin(s/3);te=99+3*Math.sin(s/5);tr=3800+700*Math.abs(Math.sin(s/2));}
+
+function seedDemo(){const now=Date.now();let c=34,e=38,r=900;
+ for(let i=119;i>=0;i--){
+  c+=(74-c)*.05+(Math.random()-.5);
+  e+=(86-e)*.045+(Math.random()-.5)*.8;
+  r+=(1600-r)*.05+(Math.random()-.5)*120;
+  c=round1(c);e=round1(e);r=Math.max(0,Math.round(r));
+  state.history.push({ts:now-i*1000,c,e,r});
+  [['cvt',c],['eng',e]].forEach(([ch,t])=>{const s=state.stats[ch];s.n++;s.sum+=t;if(t<s.min)s.min=t;if(t>s.max)s.max=t;});}
+ simC=c;simE=e;simR=r;state.cvt=c;state.eng=e;state.rpm=r;
+ state.zone.cvt=zoneOf(c,'cvt');state.zone.eng=zoneOf(e,'eng');state.zone.rpm=rpmZone(r);
+ state.stats.cvt.zoneRank=state.zone.cvt.rank;state.stats.eng.zoneRank=state.zone.eng.rank;}
+
+function demoTick(){const s=(Date.now()-simStart)/1000,cyc=Math.floor(s/80)%4,ph=s%80;
+let tc=55+75*Math.sin(s/13),te=50+70*Math.sin(s/17),tr=7000*Math.abs(Math.sin(s/7));
+ if(ph>50&&ph<68){tc=97+4*Math.sin(s/3);te=99+3*Math.sin(s/5);tr=0+700*Math.abs(Math.sin(s/2));}
  if(cyc===3&&ph>=60&&ph<66){tc=113;te=113;tr=6100;}
  simC+=(tc-simC)*.12+(Math.random()-.5)*.8;simE+=(te-simE)*.10+(Math.random()-.5)*.6;simR+=(tr-simR)*.25+(Math.random()-.5)*60;
  pushSample(round1(simC),round1(simE),Math.max(0,Math.round(simR)));}
@@ -457,9 +586,9 @@ function applyCustom(){const h=$('#hdrIn').value.trim().toUpperCase(),r=$('#reqI
  state.src.cvt={header:h,req:r,byte:+$('#byteSel').value,offset:clamp(parseInt($('#offIn').value)||0,-128,128)};
  state.src.eng={header:eh,req:er,byte:+$('#engByteSel').value,offset:clamp(parseInt($('#engOffIn').value)||0,-128,128)};
  syncInputs();saveSettings();toast('Применено');}
-function saveSettings(){try{localStorage.setItem('cvtSettings',JSON.stringify({warn:state.warn,danger:state.danger,engWarn:state.engWarn,engDanger:state.engDanger,rpmWarn:state.rpmWarn,proto:state.proto,src:state.src,sound:state.sound,verbose:state.verbose,scale:state.scale,glow:state.glow,keepAwake:state.keepAwake}));}catch(e){}}
+function saveSettings(){try{localStorage.setItem('cvtSettings',JSON.stringify({warn:state.warn,danger:state.danger,engWarn:state.engWarn,engDanger:state.engDanger,rpmWarn:state.rpmWarn,proto:state.proto,src:state.src,sound:state.sound,verbose:state.verbose,scale:state.scale,glow:state.glow,slant:state.slant,ghost:state.ghost,keepAwake:state.keepAwake}));}catch(e){}}
 function loadSettings(){try{const s=JSON.parse(localStorage.getItem('cvtSettings')||'null');if(!s)return;
- ['warn','danger','engWarn','engDanger','rpmWarn','scale','glow'].forEach(k=>{if(Number.isFinite(s[k]))state[k]=s[k];});
+ ['warn','danger','engWarn','engDanger','rpmWarn','scale','glow','slant','ghost'].forEach(k=>{if(Number.isFinite(s[k]))state[k]=s[k];});
  if(s.proto)state.proto=String(s.proto);if(s.src&&s.src.cvt&&s.src.eng)state.src=s.src;
  if(typeof s.sound==='boolean')state.sound=s.sound;if(typeof s.verbose==='boolean')state.verbose=s.verbose;if(typeof s.keepAwake==='boolean')state.keepAwake=s.keepAwake;}catch(e){}}
 function syncControls(){$('#warnRange').value=state.warn;$('#warnVal').textContent=state.warn+'°';
@@ -468,9 +597,11 @@ function syncControls(){$('#warnRange').value=state.warn;$('#warnVal').textConte
  $('#engDangerRange').value=state.engDanger;$('#engDangerVal').textContent=state.engDanger+'°';
  $('#rpmWarnRange').value=state.rpmWarn;$('#rpmWarnVal').textContent=state.rpmWarn;
  $('#scaleRange').value=Math.round(state.scale*100);$('#scaleVal').textContent=Math.round(state.scale*100)+'%';
- document.documentElement.style.setProperty('--scale',state.scale);
  $('#glowRange').value=Math.round(state.glow*100);$('#glowVal').textContent=Math.round(state.glow*100)+'%';
- document.documentElement.style.setProperty('--glow',state.glow);
+ $('#slantRange').value=state.slant;$('#slantVal').textContent=state.slant+'°';
+ $('#ghostRange').value=state.ghost;$('#ghostVal').textContent=state.ghost+'%';
+ const rs=document.documentElement.style;
+ rs.setProperty('--scale',state.scale);rs.setProperty('--glow',state.glow);rs.setProperty('--slant',state.slant+'deg');rs.setProperty('--ghost',state.ghost/100);
  $('#verboseChk').checked=state.verbose;$('#soundBtn').textContent=state.sound?'🔊':'🔇';$('#wSoundBtn').textContent=state.sound?'🔊':'🔇';
  $('#wakeSwitch').checked=state.keepAwake;if(NATIVE)AndroidBT.setSoundEnabled(state.sound);}
 function openWidget(){widgetOpen=true;$('#widgetView').hidden=false;document.body.classList.add('widget-open');render();}
@@ -496,6 +627,8 @@ function bindRange(id,key){$(id).oninput=e=>{state[key]=+e.target.value;
 bindRange('#warnRange','warn');bindRange('#dangerRange','danger');bindRange('#engWarnRange','engWarn');bindRange('#engDangerRange','engDanger');bindRange('#rpmWarnRange','rpmWarn');
 $('#scaleRange').oninput=e=>{state.scale=e.target.value/100;syncControls();saveSettings();};
 $('#glowRange').oninput=e=>{state.glow=e.target.value/100;syncControls();saveSettings();};
+$('#slantRange').oninput=e=>{state.slant=+e.target.value;syncControls();saveSettings();};
+$('#ghostRange').oninput=e=>{state.ghost=+e.target.value;syncControls();saveSettings();};
 $('#resetBtn').onclick=()=>{resetSession();if(state.mode==='demo')seedDemo();render();toast('Сессия сброшена');};
 $('#csvBtn').onclick=()=>{if(!state.history.length){toast('Нет данных');return;}
  let csv='time;cvt_c;engine_c;cvt_state;engine_state\n';
@@ -509,7 +642,8 @@ window.addEventListener('resize',()=>{drawChart();drawWidgetChart();});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&NATIVE&&state.keepAwake)AndroidBT.setKeepScreenOn(true);});
 (function init(){loadSettings();syncControls();syncInputs();updateTicks();
  if(!NATIVE){const p=document.createElement('p');p.className='hint';p.style.color='#ffd58a';p.textContent='Bluetooth доступен только внутри Android APK.';document.querySelector('.controls-card').prepend(p);}
- log('CVT·TEMP v6.1 запущен.','sys');startDemo();
+ log('CVT·TEMP v7.0','sys');startDemo();
+ setTimeout(()=>{boot=false;render();},750);
  if(state.keepAwake&&NATIVE)setTimeout(()=>AndroidBT.setKeepScreenOn(true),600);
  if(new URLSearchParams(location.search).get('widget')==='1')openWidget();})();
 </script>
