@@ -126,12 +126,18 @@ public class BtBridge {
         });
     }
 
-    @JavascriptInterface
+        @JavascriptInterface
     public void setKeepScreenOn(boolean on) {
-        main.post(() -> {
+        if (act instanceof MainActivity) ((MainActivity) act).applyKeepAwake(on);
+        else main.post(() -> {
             if (on) act.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             else act.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         });
+    }
+
+    @JavascriptInterface
+    public boolean getKeepScreenOn() {
+        return act instanceof MainActivity && ((MainActivity) act).isKeepAwake();
     }
 
     @JavascriptInterface
