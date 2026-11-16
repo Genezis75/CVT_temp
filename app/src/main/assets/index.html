@@ -161,6 +161,16 @@ body.widget-open{overflow:hidden}
 @media(orientation:landscape) and (max-height:520px){#widgetView{padding:9px;gap:8px}.w-tiles{grid-template-columns:1fr 1fr;gap:9px}.w-tile{padding:12px}.w-tile .tb-top{margin-bottom:5px}.w-tile .tb-icon{width:30px;height:30px}.w-tile .tb-label small{display:none}.w-digits{font-size:clamp(52px,12vh,96px);margin:2px 0 8px}#wChart{height:40px}.w-foot{display:none}}
 @media(min-width:960px){main{grid-template-columns:1.12fr .88fr;align-items:start}.temp-card{grid-column:1;grid-row:1}.chart-card{grid-column:1;grid-row:2}.stats-card{grid-column:1;grid-row:3}.controls-card{grid-column:2;grid-row:1}.source-card{grid-column:2;grid-row:2}.log-card{grid-column:2;grid-row:3}.help{grid-column:1/-1;grid-row:4}}
 @media(max-width:560px){.tb-main{flex-direction:column;align-items:stretch;gap:12px}.tb-digits{transform-origin:center;text-align:center;font-size:clamp(74px,22vw,116px)}.tb-digits>span:first-child{text-align:center}.tb-icon{width:34px;height:34px}.tb-label b{font-size:12px}.fgrid{grid-template-columns:1fr}.brand small{display:none}}
+.rpm-strip{display:flex;align-items:center;gap:9px;padding:10px 14px;margin-bottom:14px;border:1px solid var(--line);border-radius:14px;background:rgba(10,18,32,.55)}
+.rpm-strip svg{width:26px;height:26px;color:var(--info);flex:none}
+.rpm-label{font:700 10px system-ui;letter-spacing:.2em;color:var(--muted);margin-right:auto}
+.rpm-strip b{font:700 clamp(28px,8vw,44px)/1 system-ui;font-variant-numeric:tabular-nums;color:var(--text);text-shadow:0 0 calc(18px * var(--glow,1)) rgba(79,140,255,.75)}
+.rpm-unit{font:600 11px system-ui;color:var(--muted)}
+.tb-digits{text-shadow:0 0 calc(22px * var(--glow,1)) var(--bz)}
+.tb-fill{box-shadow:0 0 calc(12px * var(--glow,1)) var(--bz)}
+.tb-marker{box-shadow:0 0 calc(11px * var(--glow,1)) var(--bz)}
+@media(min-width:960px){.controls-card{grid-column:1;grid-row:3}.stats-card{grid-column:2;grid-row:1}}
+@media(max-width:959px){.controls-card{order:4}.stats-card{order:3}}
 </style>
 </head>
 <body>
@@ -179,6 +189,11 @@ body.widget-open{overflow:hidden}
 <main>
   <section class="card temp-card" style="--d:.05s">
     <h2>Температуры</h2>
+    <div class="rpm-strip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/><circle cx="12" cy="17" r="1.6" fill="currentColor" stroke="none"/></svg>
+      <span class="rpm-label">ОБОРОТЫ ДВС</span>
+    <b id="rpmVal">--</b><span class="rpm-unit">об/мин</span>
+    </div>
     <div class="temp-block" id="cvtTile">
       <div class="tb-top"><div class="tb-label">
         <svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h12a8 8 0 0 1 0 16H10a8 8 0 0 1 0-16z"/><circle cx="10" cy="16" r="4.5"/><circle cx="22" cy="16" r="4.5"/><circle cx="10" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="22" cy="16" r="1.4" fill="currentColor" stroke="none"/><path d="M14.5 16h3" opacity=".6"/></svg>
@@ -212,6 +227,7 @@ body.widget-open{overflow:hidden}
     <div class="ctl"><label>ДВС · горячо<small>°C</small></label><input type="range" id="engWarnRange" class="r-warn" min="85" max="110" value="100"><span class="val" id="engWarnVal">100°</span></div>
     <div class="ctl"><label>ДВС · перегрев<small>°C</small></label><input type="range" id="engDangerRange" class="r-danger" min="105" max="130" value="112"><span class="val" id="engDangerVal">112°</span></div>
     <div class="ctl"><label>Размер цифр<small>масштаб</small></label><input type="range" id="scaleRange" min="60" max="125" value="100"><span class="val" id="scaleVal">100%</span></div>
+    <div class="ctl"><label>Свечение цифр<small>яркость подсветки</small></label><input type="range" id="glowRange" min="0" max="200" value="100"><span class="val" id="glowVal">100%</span></div>
     <div class="ctl"><label>Экран не гаснет</label><span class="switch"><input type="checkbox" id="wakeSwitch"><i></i></span></div>
     <div class="btnrow"><button class="btn" id="resetBtn">↺ Сброс</button><button class="btn" id="csvBtn">⤓ CSV</button><button class="btn" id="widgetBtn2">▣ Виджет</button></div>
   </section>
@@ -388,6 +404,39 @@ $('#presetSel').onchange=e=>{if(e.target.value!=='custom'){state.src.cvt={...PRE
 $('#protoSel').onchange=async e=>{state.proto=e.target.value;saveSettings();updateSrcLabels();if(state.mode==='ble'){try{await sendCmd('ATSP'+state.proto,1800);toast('Протокол изменён');}catch(err){toast(err.message);}}};
 $('#applyBtn').onclick=applyCustom;$('#scanBtn').onclick=scanSources;$('#verboseChk').onchange=e=>{state.verbose=e.target.checked;saveSettings();};
 window.addEventListener('resize',()=>{drawChart();drawWidgetChart();});
+/* --- обороты ДВС --- */
+state.rpm=null; state.glow=1;
+const RPM_SRC={header:'7E0',req:'010C'};
+function parseRpm(resp){const up=resp.toUpperCase();if(/NO\s*DATA|ERROR|\?/.test(up))throw new Error('нет данных');
+ const cl=up.replace(/[^0-9A-F]/g,''),i=cl.indexOf('410C');if(i<0)throw new Error('нет 410C');
+ const b=cl.slice(i+4);if(b.length<4)throw new Error('короткий ответ');
+ return (parseInt(b.slice(0,2),16)*256+parseInt(b.slice(2,4),16))/4;}
+function paintRpm(){const el=document.getElementById('rpmVal');if(el)el.textContent=state.rpm==null?'--':Math.round(state.rpm);}
+async function pollRpm(){if(state.mode!=='ble')return;
+ try{await sendCmd('ATSH'+RPM_SRC.header,1200);state.rpm=parseRpm(await sendCmd(RPM_SRC.req,2000));}catch(e){state.rpm=null;}
+ paintRpm();}
+const _pushSample=pushSample;
+pushSample=function(c,e){_pushSample(c,e);pollRpm();};
+const _render=render;
+render=function(){_render();paintRpm();};
+const _startDemo=startDemo;
+startDemo=function(){_startDemo();state.rpm=760+Math.round(Math.random()*120);paintRpm();};
+setInterval(()=>{if(state.mode==='demo'){state.rpm+=((780+220*Math.sin(Date.now()/9000))-state.rpm)*.2+(Math.random()-.5)*40;paintRpm();}},1000);
+
+/* --- свечение цифр --- */
+function applyGlow(v){state.glow=v;document.documentElement.style.setProperty('--glow',v);
+ const r=document.getElementById('glowRange'),l=document.getElementById('glowVal');
+ if(r)r.value=Math.round(v*100); if(l)l.textContent=Math.round(v*100)+'%';}
+(function(){const r=document.getElementById('glowRange');if(!r)return;
+ try{const s=JSON.parse(localStorage.getItem('cvtSettings')||'null');if(s&&Number.isFinite(s.glow))state.glow=s.glow;}catch(e){}
+ applyGlow(state.glow);
+ r.oninput=e=>{applyGlow(e.target.value/100);saveSettings();};})();
+
+/* --- надёжный keep-screen-on --- */
+window.onNativeResume=function(){if(NATIVE&&state.keepAwake)AndroidBT.setKeepScreenOn(true);};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&NATIVE&&state.keepAwake)AndroidBT.setKeepScreenOn(true);});
+const _setWake=setWakeNative;
+setWakeNative=function(on){_setWake(on);if(NATIVE)setTimeout(()=>AndroidBT.setKeepScreenOn(on),400);toast(on?'Экран не гаснет':'Обычный режим экрана');};  
 (function init(){loadSettings();if(!Number.isFinite(state.scale))state.scale=1;syncControls();syncInputs();updateTicks();updateSrcLabels();if(!NATIVE){const p=document.createElement('p');p.className='hint';p.style.color='#ffd58a';p.textContent='Откройте это приложение внутри Android APK — Bluetooth SPP доступен только там.';document.querySelector('.controls-card').prepend(p);}log('CVT·TEMP v4.0 (Android SPP) запущен.','sys');startDemo();if(state.keepAwake)setWakeNative(true);if(new URLSearchParams(location.search).get('widget')==='1')openWidget();})();
 </script>
 </body>
