@@ -51,7 +51,7 @@ public class BtBridge {
         main.post(() -> web.evaluateJavascript(script, null));
     }
 
-    private void toast(String msg) {
+    private void showToas(String msg) {
         main.post(() -> Toast.makeText(act, msg, Toast.LENGTH_SHORT).show());
     }
 
@@ -90,7 +90,7 @@ public class BtBridge {
     public void openBluetoothSettings() {
         main.post(() -> {
             try { act.startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS)); }
-            catch (Exception e) { toast("Не удалось открыть настройки Bluetooth"); }
+            catch (Exception e) { showToast("Не удалось открыть настройки Bluetooth"); }
         });
     }
 
@@ -174,8 +174,7 @@ public class BtBridge {
     }
 
     @JavascriptInterface
-    public void toast(String msg) { toast(String.valueOf(msg)); }
-
+    public void toast(String msg) { showToast(String.valueOf(msg)); }
     /** Сохранение CSV в публичную папку Download. */
     @JavascriptInterface
     public String saveCsv(String name, String content) {
