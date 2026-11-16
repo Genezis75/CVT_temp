@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070d18">
+<title>CVT TEMP</title>
+<style>
+:root{--bg0:#070d18;--bg1:#0c1526;--surface:rgba(19,31,51,.78);--line:rgba(120,160,220,.18);--text:#eaf2ff;--muted:#93a7c9;--cool:#3fd9ff;--ok:#57e389;--warn:#ffb020;--danger:#ff4040;--info:#4f8cff;--demo:#ff4fd8;--eng:#ff9f43;--zone:#57e389;--scale:1}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scrollbar-color:var(--info) rgba(255,255,255,.05);scrollbar-width:thin}
+html::-webkit-scrollbar,.log::-webkit-scrollbar{width:9px}
+html::-webkit-scrollbar-track,.log::-webkit-scrollbar-track{background:rgba(255,255,255,.04);border-radius:8px}
+html::-webkit-scrollbar-thumb,.log::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--info),var(--cool));border-radius:8px;border:2px solid #0a1322}
+body{min-height:100vh;color:var(--text);font:400 15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:linear-gradient(180deg,var(--bg0),var(--bg1) 55%,#0a1120);overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.45;animation:float 26s ease-in-out infinite alternate}
+.b1{width:54vw;height:54vw;left:-16vw;top:-18vw;background:radial-gradient(circle,rgba(63,217,255,.3),transparent 65%)}
+.b2{width:48vw;height:48vw;right:-14vw;top:24vh;background:radial-gradient(circle,rgba(79,140,255,.26),transparent 65%);animation-delay:-9s}
+.b3{width:42vw;height:42vw;left:22vw;bottom:-20vw;background:radial-gradient(circle,rgba(255,79,216,.14),transparent 65%);animation-delay:-17s}
+@keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(6vw,-5vh) scale(1.14)}}
+#vignette{position:fixed;inset:0;z-index:110;pointer-events:none}
+body.danger #vignette{animation:vp 1.1s ease-in-out infinite}
+@keyframes vp{0%,100%{box-shadow:inset 0 0 120px rgba(255,64,64,.18)}50%{box-shadow:inset 0 0 200px rgba(255,64,64,.5)}}
+header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(7,13,24,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:9px;margin-right:auto;min-width:0}
+.brand svg{width:28px;height:28px;flex:none}
+.brand b{font:700 16px system-ui;letter-spacing:.05em;white-space:nowrap}
+.brand small{display:block;font:600 8px system-ui;letter-spacing:.28em;color:var(--muted)}
+.chip{font:700 10px system-ui;letter-spacing:.12em;padding:5px 10px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+.chip.demo{color:var(--demo);border-color:rgba(255,79,216,.5)}
+.chip.on{color:var(--ok);border-color:rgba(87,227,137,.5)}
+.chip.off{color:var(--muted)}.chip.err{color:var(--danger);border-color:rgba(255,64,64,.55)}
+.chip.scan{color:var(--warn);border-color:rgba(255,176,32,.5)}
+.iconbtn{width:38px;height:38px;flex:none;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font-size:16px;cursor:pointer;transition:.2s}
+.iconbtn:active{transform:scale(.93);border-color:var(--cool)}
+main{display:grid;gap:12px;padding:12px;max-width:1180px;margin:0 auto;grid-template-columns:1fr}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;backdrop-filter:blur(10px);box-shadow:0 16px 44px rgba(0,0,0,.34);animation:fade .6s both;animation-delay:var(--d,0s);min-width:0}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.card h2{font:700 11px system-ui;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h2::before{content:"";width:7px;height:7px;border-radius:2px;background:linear-gradient(135deg,var(--info),var(--cool));box-shadow:0 0 8px var(--cool)}
+.temp-card{order:1}
+.temp-block{--bz:#57e389;--accent:var(--cool);padding:2px 0}
+.temp-block+.temp-block{border-top:1px dashed rgba(120,160,220,.22);margin-top:16px;padding-top:18px}
+.temp-block.engine{--accent:var(--eng)}
+.tb-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.tb-label{display:flex;align-items:center;gap:11px;min-width:0}
+.tb-icon{width:38px;height:38px;flex:none;color:var(--accent)}
+.tb-label b{font:700 14px system-ui;letter-spacing:.18em}
+.tb-label small{display:block;font-size:10px;color:var(--muted);margin-top:2px}
+.tb-zone{font:700 10px system-ui;letter-spacing:.14em;color:var(--bz);border:1px solid var(--bz);padding:4px 10px;border-radius:99px;white-space:nowrap;background:rgba(255,255,255,.03);transition:.4s}
+.tb-main{display:flex;align-items:center;gap:20px}
+.tb-digits{font:700 clamp(64px,17vw,108px)/1 system-ui;font-variant-numeric:tabular-nums;color:var(--bz);transform:scale(var(--scale));transform-origin:left center;white-space:nowrap;text-shadow:0 0 22px var(--bz);transition:color .5s,opacity .3s}
+.tb-digits>span:first-child{display:inline-block;min-width:2.8ch;text-align:right}
+.tb-digits .unit{font-size:.32em;color:var(--muted);vertical-align:super;margin-left:2px}
+.tb-digits.stale{opacity:.42}
+.tb-barwrap{flex:1;min-width:0}
+.tb-bar{position:relative;height:17px;border-radius:99px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 4px rgba(0,0,0,.45)}
+.tb-fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#3fd9ff,#57e389 42%,#ffb020 74%,#ff4040);width:0%;transition:width .8s ease;box-shadow:0 0 12px var(--bz)}
+.tb-tick{position:absolute;top:-5px;bottom:-5px;width:2px;border-radius:2px;z-index:2}
+.tb-tick.warn{background:#ffb020}.tb-tick.danger{background:#ff4040}
+.tb-marker{position:absolute;top:50%;width:21px;height:21px;border-radius:50%;background:#fff;border:3px solid var(--bz);transform:translate(-50%,-50%);box-shadow:0 0 11px var(--bz);transition:left .8s ease,border-color .5s;z-index:3}
+.tb-scale{display:flex;justify-content:space-between;font:600 9px system-ui;color:var(--muted);margin-top:8px}
+.tb-src{font-size:9px;color:var(--muted);margin-top:7px;letter-spacing:.03em}
+.controls-card{order:3}
+.ctl{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed rgba(120,160,220,.12)}
+.ctl:last-child{border-bottom:none}
+.ctl label{flex:1;font:600 13px system-ui}
+.ctl label small{display:block;font-weight:400;font-size:10px;color:var(--muted)}
+.ctl .val{font:700 12px system-ui;color:var(--cool);min-width:48px;text-align:right}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 14px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);font:600 13px system-ui;cursor:pointer;transition:.2s}
+.btn:active{transform:scale(.97);border-color:var(--cool)}
+.btn:disabled{opacity:.45;pointer-events:none}
+.btn.primary{background:linear-gradient(135deg,var(--info),var(--cool));color:#04101e;border:none;font-weight:700}
+.btn.wide{width:100%}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;padding-top:12px}
+.btnrow .btn{flex:1;min-width:104px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;max-width:170px;height:24px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--info),var(--cool))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;margin-top:-6.5px;border-radius:50%;background:#fff;border:3px solid var(--cool)}
+input[type=range].r-warn::-webkit-slider-runnable-track{background:linear-gradient(90deg,#7a5a12,var(--warn))}
+input[type=range].r-warn::-webkit-slider-thumb{border-color:var(--warn)}
+input[type=range].r-danger::-webkit-slider-runnable-track{background:linear-gradient(90deg,#7a1d1d,var(--danger))}
+input[type=range].r-danger::-webkit-slider-thumb{border-color:var(--danger)}
+.switch{position:relative;width:44px;height:24px;flex:none}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch i{position:absolute;inset:0;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid var(--line);transition:.25s}
+.switch i::before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:var(--muted);transition:.25s}
+.switch input:checked+i{background:linear-gradient(135deg,var(--info),var(--cool));border-color:transparent}
+.switch input:checked+i::before{transform:translateX(20px);background:#fff}
+.stats-card{order:4}
+.statgroup{margin-bottom:12px}.statgroup:last-child{margin-bottom:0}
+.statgroup-title{font:700 9px system-ui;letter-spacing:.24em;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:6px;text-transform:uppercase}
+.statgroup-title i{width:9px;height:9px;border-radius:3px}
+.statgroup-title i.c{background:var(--cool)}.statgroup-title i.e{background:var(--eng)}
+.stats{display:flex;flex-wrap:wrap;gap:7px}
+.stat{flex:1;min-width:74px;background:rgba(10,18,32,.55);border:1px solid var(--line);border-radius:12px;padding:9px 10px;text-align:center}
+.stat b{display:block;font:700 19px system-ui;font-variant-numeric:tabular-nums}
+.stat span{font:600 8px system-ui;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+.stat.hot b{color:var(--warn)}.stat.ovh b{color:var(--danger)}
+.chart-card{order:2}
+.chart-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.legend{display:flex;gap:10px;font-size:10px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:0;border-top:3px solid var(--cool);vertical-align:middle;margin-right:4px;border-radius:2px}
+.legend i.e{border-color:var(--eng)}.legend i.t{border-top-style:dashed;border-color:var(--muted)}
+#chart{width:100%;height:170px;display:block;margin-top:8px}
+.source-card{order:5}
+.srcgroup{font:700 9px system-ui;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin:10px 0 7px;display:flex;align-items:center;gap:6px}
+.srcgroup::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--cool)}
+.srcgroup.eng::before{background:var(--eng)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field.full{grid-column:1/-1}
+.field span{font:600 9px system-ui;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+select,input[type=text],input[type=number]{background:rgba(10,18,32,.85);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:9px 11px;font:600 12px system-ui;width:100%}
+input.mono{font-family:ui-monospace,Consolas,monospace;letter-spacing:.1em;text-transform:uppercase}
+select:focus,input:focus{outline:none;border-color:var(--cool)}
+.hint{font-size:10px;color:var(--muted);margin-top:9px}.hint b{color:var(--cool)}
+.scanres{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.schip{font:600 10px ui-monospace,monospace;padding:5px 9px;border-radius:8px;border:1px solid var(--line);color:var(--muted)}
+.schip.ok{color:var(--ok);border-color:rgba(87,227,137,.5)}.schip.bad{color:var(--danger);border-color:rgba(255,64,64,.4)}
+.checkline{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:11px;color:var(--muted)}
+.checkline input{accent-color:var(--cool)}
+.log-card{order:6}
+.log{max-height:200px;overflow-y:auto;background:rgba(6,11,20,.8);border:1px solid var(--line);border-radius:11px;padding:9px 11px;font:400 10px/1.65 ui-monospace,Consolas,monospace}
+.log div{white-space:pre-wrap;word-break:break-all;color:#b9c9e6}
+.log .tx{color:var(--cool)}.log .rx{color:#8fa3c0}.log .ok{color:var(--ok)}.log .err{color:var(--danger)}.log .sys{color:var(--demo)}
+.help{order:7}
+.help summary{cursor:pointer;list-style:none;font:700 11px system-ui;letter-spacing:.24em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.help summary::before{content:"▸";color:var(--cool);transition:.25s}
+.help[open] summary::before{transform:rotate(90deg)}
+.help ol{margin:10px 0 0 18px;font-size:12px;color:#c6d4ee}.help li{margin:5px 0}.help b{color:var(--cool)}
+footer{padding:16px;text-align:center;font-size:10px;color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,16px);opacity:0;z-index:130;pointer-events:none;background:rgba(13,22,38,.96);border:1px solid var(--zone);border-radius:13px;padding:11px 16px;font:600 12px system-ui;transition:.3s;max-width:92vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#devicePicker{position:fixed;inset:0;z-index:140;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(4,8,16,.78);backdrop-filter:blur(8px)}
+#devicePicker.show{display:flex}
+.picker-card{width:min(440px,100%);max-height:82vh;overflow:auto;background:#101a2c;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.picker-card h3{font:700 14px system-ui;letter-spacing:.14em;margin-bottom:6px}
+.picker-card p{font-size:12px;color:var(--muted);margin-bottom:12px}
+.dev{display:flex;align-items:center;gap:10px;width:100%;padding:12px;margin-bottom:8px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;text-align:left}
+.dev:active{border-color:var(--cool);background:rgba(63,217,255,.08)}
+.dev svg{width:24px;height:24px;flex:none;color:var(--cool)}
+.dev b{display:block;font:600 13px system-ui}
+.dev small{display:block;font:400 10px ui-monospace,monospace;color:var(--muted)}
+#widgetView{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;gap:12px;padding:14px;background:linear-gradient(180deg,rgba(7,13,24,.98),rgba(12,21,38,.98));overflow:auto}
+#widgetView[hidden]{display:none}
+body.widget-open{overflow:hidden}
+.w-head{display:flex;align-items:center;gap:8px;flex:none}
+.w-brand{display:flex;align-items:center;gap:8px;margin-right:auto;font:700 14px system-ui;letter-spacing:.06em}
+.w-brand svg{width:24px;height:24px}
+.w-actions{display:flex;gap:7px}
+.w-tiles{flex:1;display:grid;gap:12px;grid-template-columns:1fr;align-content:center;min-height:0}
+.w-tile{--bz:#57e389;--accent:var(--cool);background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;position:relative;overflow:hidden}
+.w-tile.engine{--accent:var(--eng)}
+.w-digits{text-align:center;transform-origin:center;margin:6px 0 14px;font-size:clamp(80px,23vw,160px)}
+.w-digits>span:first-child{text-align:center;min-width:2.6ch}
+#wChart{width:100%;height:70px;flex:none;display:block}
+.w-foot{font-size:10px;color:var(--muted);text-align:center;flex:none}
+@media(min-width:760px){.w-tiles{grid-template-columns:1fr 1fr}.w-digits{font-size:clamp(66px,13vw,140px)}}
+@media(orientation:landscape) and (max-height:520px){#widgetView{padding:9px;gap:8px}.w-tiles{grid-template-columns:1fr 1fr;gap:9px}.w-tile{padding:12px}.w-tile .tb-top{margin-bottom:5px}.w-tile .tb-icon{width:30px;height:30px}.w-tile .tb-label small{display:none}.w-digits{font-size:clamp(52px,12vh,96px);margin:2px 0 8px}#wChart{height:40px}.w-foot{display:none}}
+@media(min-width:960px){main{grid-template-columns:1.12fr .88fr;align-items:start}.temp-card{grid-column:1;grid-row:1}.chart-card{grid-column:1;grid-row:2}.stats-card{grid-column:1;grid-row:3}.controls-card{grid-column:2;grid-row:1}.source-card{grid-column:2;grid-row:2}.log-card{grid-column:2;grid-row:3}.help{grid-column:1/-1;grid-row:4}}
+@media(max-width:560px){.tb-main{flex-direction:column;align-items:stretch;gap:12px}.tb-digits{transform-origin:center;text-align:center;font-size:clamp(74px,22vw,116px)}.tb-digits>span:first-child{text-align:center}.tb-icon{width:34px;height:34px}.tb-label b{font-size:12px}.fgrid{grid-template-columns:1fr}.brand small{display:none}}
+</style>
+</head>
+<body>
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div id="vignette"></div>
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M3 15a9 9 0 1 1 18 0" stroke="#3fd9ff" stroke-width="2" stroke-linecap="round"/><path d="M12 15l4.2-5.4" stroke="#ff4040" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="1.8" fill="#eaf2ff"/></svg>
+    <div><b>CVT·TEMP</b><small>SUZUKI HUSTLER</small></div>
+  </div>
+  <span class="chip demo" id="statusChip">ДЕМО</span>
+  <button class="iconbtn" id="widgetBtn" title="Виджет">▣</button>
+  <button class="iconbtn" id="soundBtn" title="Звук">🔊</button>
+  <button class="iconbtn" id="fsBtn" title="Полный экран">⛶</button>
+</header>
+<main>
+  <section class="card temp-card" style="--d:.05s">
+    <h2>Температуры</h2>
+    <div class="temp-block" id="cvtTile">
+      <div class="tb-top"><div class="tb-label">
+        <svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h12a8 8 0 0 1 0 16H10a8 8 0 0 1 0-16z"/><circle cx="10" cy="16" r="4.5"/><circle cx="22" cy="16" r="4.5"/><circle cx="10" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="22" cy="16" r="1.4" fill="currentColor" stroke="none"/><path d="M14.5 16h3" opacity=".6"/></svg>
+        <div><b>ВАРИАТОР</b><small>масло CVT · Jatco</small></div></div><span class="tb-zone" id="cvtZone">НОРМА</span></div>
+      <div class="tb-main"><div class="tb-digits"><span id="cvtTemp">--</span><span class="unit">°C</span></div>
+        <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="cvtFill"></div><i class="tb-tick warn" id="cvtTickWarn"></i><i class="tb-tick danger" id="cvtTickDanger"></i><i class="tb-marker" id="cvtMarker" style="display:none"></i></div>
+        <div class="tb-scale"><span>0°</span><span>40°</span><span>80°</span><span>120°</span><span>150°</span></div><div class="tb-src" id="cvtSrcLine"></div></div></div>
+    </div>
+    <div class="temp-block engine" id="engTile">
+      <div class="tb-top"><div class="tb-label">
+        <svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M7 7h7l2 2h3v3h2v5h-2v2H9l-2-2H5v-3H3v-4h2V8h2z"/><path d="M9 4h5M12 4v3M19 12h2"/></svg>
+        <div><b>ДВИГАТЕЛЬ</b><small>охлаждающая жидкость</small></div></div><span class="tb-zone" id="engZone">НОРМА</span></div>
+      <div class="tb-main"><div class="tb-digits"><span id="engTemp">--</span><span class="unit">°C</span></div>
+        <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="engFill"></div><i class="tb-tick warn" id="engTickWarn"></i><i class="tb-tick danger" id="engTickDanger"></i><i class="tb-marker" id="engMarker" style="display:none"></i></div>
+        <div class="tb-scale"><span>40°</span><span>60°</span><span>80°</span><span>100°</span><span>120°</span></div><div class="tb-src" id="engSrcLine"></div></div></div>
+    </div>
+  </section>
+
+  <section class="card chart-card" style="--d:.12s">
+    <div class="chart-head"><h2 style="margin:0">История · 3 мин</h2>
+      <div class="legend"><span><i></i>Вариатор</span><span><i class="e"></i>Двигатель</span><span><i class="t"></i>пороги</span></div></div>
+    <canvas id="chart"></canvas>
+  </section>
+
+  <section class="card controls-card" style="--d:.18s">
+    <h2>Пульт управления</h2>
+    <button class="btn primary wide" id="connectBtn">⚡ Подключить адаптер</button>
+    <div class="ctl"><label>Демо</label><span class="switch"><input type="checkbox" id="demoSwitch" checked><i></i></span></div>
+    <div class="ctl"><label>CVT · горячо<small>°C</small></label><input type="range" id="warnRange" class="r-warn" min="70" max="105" value="90"><span class="val" id="warnVal">90°</span></div>
+    <div class="ctl"><label>CVT · перегрев<small>°C</small></label><input type="range" id="dangerRange" class="r-danger" min="100" max="130" value="110"><span class="val" id="dangerVal">110°</span></div>
+    <div class="ctl"><label>ДВС · горячо<small>°C</small></label><input type="range" id="engWarnRange" class="r-warn" min="85" max="110" value="100"><span class="val" id="engWarnVal">100°</span></div>
+    <div class="ctl"><label>ДВС · перегрев<small>°C</small></label><input type="range" id="engDangerRange" class="r-danger" min="105" max="130" value="112"><span class="val" id="engDangerVal">112°</span></div>
+    <div class="ctl"><label>Размер цифр<small>масштаб</small></label><input type="range" id="scaleRange" min="60" max="125" value="100"><span class="val" id="scaleVal">100%</span></div>
+    <div class="ctl"><label>Экран не гаснет</label><span class="switch"><input type="checkbox" id="wakeSwitch"><i></i></span></div>
+    <div class="btnrow"><button class="btn" id="resetBtn">↺ Сброс</button><button class="btn" id="csvBtn">⤓ CSV</button><button class="btn" id="widgetBtn2">▣ Виджет</button></div>
+  </section>
+
+  <section class="card stats-card" style="--d:.24s">
+    <h2>Статистика сессии</h2>
+    <div class="statgroup"><div class="statgroup-title"><i class="c"></i>Вариатор</div><div class="stats"><div class="stat"><b id="cMin">--</b><span>Мин</span></div><div class="stat"><b id="cMax">--</b><span>Макс</span></div><div class="stat"><b id="cAvg">--</b><span>Среднее</span></div><div class="stat hot"><b id="cHot">0:00</b><span>Время ≥⚠</span></div><div class="stat ovh"><b id="cOvh">0</b><span>Перегревы</span></div></div></div>
+    <div class="statgroup"><div class="statgroup-title"><i class="e"></i>Двигатель</div><div class="stats"><div class="stat"><b id="eMin">--</b><span>Мин</span></div><div class="stat"><b id="eMax">--</b><span>Макс</span></div><div class="stat"><b id="eAvg">--</b><span>Среднее</span></div><div class="stat hot"><b id="eHot">0:00</b><span>Время ≥⚠</span></div><div class="stat ovh"><b id="eOvh">0</b><span>Перегревы</span></div></div></div>
+  </section>
+
+  <section class="card source-card" style="--d:.3s">
+    <h2>Источник данных · OBD</h2>
+    <div class="srcgroup">Вариатор</div>
+    <div class="fgrid">
+      <div class="field full"><span>Пресет</span><select id="presetSel"><option value="0">Jatco · 7E1 · 2104 · A−50</option><option value="1">Jatco · 7E2 · 2104 · A−50</option><option value="custom">Свой</option></select></div>
+      <div class="field full"><span>Протокол</span><select id="protoSel"><option value="6">6 · CAN 11/500 (Suzuki)</option><option value="0">0 · Авто</option><option value="7">7 · CAN 29/500</option><option value="8">8 · CAN 11/250</option><option value="9">9 · CAN 29/250</option></select></div>
+      <div class="field"><span>Заголовок</span><input type="text" id="hdrIn" class="mono" value="7E1" maxlength="8"></div>
+      <div class="field"><span>Запрос</span><input type="text" id="reqIn" class="mono" value="2104" maxlength="8"></div>
+      <div class="field"><span>Байт</span><select id="byteSel"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>
+      <div class="field"><span>Смещение</span><input type="number" id="offIn" value="-50" min="-128" max="128"></div>
+    </div>
+    <div class="srcgroup eng">Двигатель</div>
+    <div class="fgrid">
+      <div class="field"><span>Заголовок</span><input type="text" id="engHdrIn" class="mono" value="7E0" maxlength="8"></div>
+      <div class="field"><span>Запрос</span><input type="text" id="engReqIn" class="mono" value="0105" maxlength="8"></div>
+      <div class="field"><span>Байт</span><select id="engByteSel"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>
+      <div class="field"><span>Смещение</span><input type="number" id="engOffIn" value="-40" min="-128" max="128"></div>
+    </div>
+    <div class="btnrow"><button class="btn" id="applyBtn">✓ Применить</button><button class="btn" id="scanBtn">🔍 Поиск</button></div>
+    <div class="scanres" id="scanRes"></div>
+    <label class="checkline"><input type="checkbox" id="verboseChk"> Подробный лог</label>
+    <p class="hint">CVT: <b>7E1 · 2104 · A−50</b>. ДВС: <b>0105 · A−40</b>. При «NO DATA» — Поиск или протокол «Авто».</p>
+  </section>
+
+  <section class="card log-card" style="--d:.36s"><h2>Журнал</h2><div class="log" id="logBox"></div></section>
+
+  <details class="card help" style="--d:.42s">
+    <summary>Как пользоваться</summary>
+    <ol id="helpList">
+      <li>Сопрягите ELM327 с телефоном в настройках Bluetooth (PIN 1234 или 0000).</li>
+      <li>Вставьте адаптер в OBD2, включите зажигание.</li>
+      <li>Нажмите <b>Подключить адаптер</b> и выберите ELM327 в списке.</li>
+      <li>Кнопка <b>▣</b> — компактный виджет. Виджет рабочего стола добавляется через меню «Виджеты» Android.</li>
+      <li>При «NO DATA» по CVT — <b>Поиск</b> или протокол «Авто».</li>
+    </ol>
+  </details>
+</main>
+<footer>CVT·TEMP v4.0 · ELM327 classic Bluetooth</footer>
+<div id="toast"></div>
+
+<div id="devicePicker"><div class="picker-card">
+  <h3>Выбор адаптера</h3><p>Сопряжённые Bluetooth-устройства</p>
+  <div id="devList"></div>
+  <div class="btnrow"><button class="btn" id="btSettingsBtn">⚙ Настройки Bluetooth</button><button class="btn" id="pickerClose">Закрыть</button></div>
+</div></div>
+
+<div id="widgetView" hidden>
+  <div class="w-head"><div class="w-brand"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15a9 9 0 1 1 18 0" stroke="#3fd9ff" stroke-width="2" stroke-linecap="round"/><path d="M12 15l4.2-5.4" stroke="#ff4040" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="1.8" fill="#eaf2ff"/></svg>CVT·TEMP</div>
+    <span class="chip demo" id="wStatusChip">ДЕМО</span>
+    <div class="w-actions"><button class="iconbtn" id="wConnectBtn">⚡</button><button class="iconbtn" id="wSoundBtn">🔊</button><button class="iconbtn" id="wFsBtn">⛶</button><button class="iconbtn" id="wExitBtn">✕</button></div></div>
+  <div class="w-tiles">
+    <div class="w-tile" id="wCvtTile"><div class="tb-top"><div class="tb-label"><svg class="tb-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h12a8 8 0 0 1 0 16H10a8 8 0 0 1 0-16z"/><circle cx="10" cy="16" r="4.5"/><circle cx="22" cy="16" r="4.5"/><circle cx="10" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="22" cy="16" r="1.4" fill="currentColor" stroke="none"/></svg><div><b>ВАРИАТОР</b><small>масло CVT</small></div></div><span class="tb-zone" id="wCvtZone">НОРМА</span></div>
+      <div class="tb-digits w-digits"><span id="wCvtTemp">--</span><span class="unit">°C</span></div>
+      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wCvtFill"></div><i class="tb-tick warn" id="wCvtTickWarn"></i><i class="tb-tick danger" id="wCvtTickDanger"></i><i class="tb-marker" id="wCvtMarker" style="display:none"></i></div><div class="tb-scale"><span>0°</span><span>40°</span><span>80°</span><span>120°</span><span>150°</span></div></div></div>
+    <div class="w-tile engine" id="wEngTile"><div class="tb-top"><div class="tb-label"><svg class="tb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M7 7h7l2 2h3v3h2v5h-2v2H9l-2-2H5v-3H3v-4h2V8h2z"/><path d="M9 4h5M12 4v3M19 12h2"/></svg><div><b>ДВИГАТЕЛЬ</b><small>охлаждающая жидкость</small></div></div><span class="tb-zone" id="wEngZone">НОРМА</span></div>
+      <div class="tb-digits w-digits"><span id="wEngTemp">--</span><span class="unit">°C</span></div>
+      <div class="tb-barwrap"><div class="tb-bar"><div class="tb-fill" id="wEngFill"></div><i class="tb-tick warn" id="wEngTickWarn"></i><i class="tb-tick danger" id="wEngTickDanger"></i><i class="tb-marker" id="wEngMarker" style="display:none"></i></div><div class="tb-scale"><span>40°</span><span>60°</span><span>80°</span><span>100°</span><span>120°</span></div></div></div>
+  </div>
+  <canvas id="wChart"></canvas><div class="w-foot" id="wFoot"></div>
+</div>
+
+<script>
+'use strict';
+const $=s=>document.querySelector(s),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),round1=v=>Math.round(v*10)/10,sleep=ms=>new Promise(r=>setTimeout(r,ms)),HEX=/^[0-9A-F]+$/;
+const NATIVE=!!window.AndroidBT;
+const ZONES={cool:{rank:0,label:'ХОЛОДНЫЙ',color:'#3fd9ff'},ok:{rank:1,label:'НОРМА',color:'#57e389'},warn:{rank:2,label:'ГОРЯЧО',color:'#ffb020'},danger:{rank:3,label:'ПЕРЕГРЕВ',color:'#ff4040'}};
+const RANGE={cvt:{min:0,max:150},eng:{min:40,max:130}};
+const PRESETS=[{header:'7E1',req:'2104',byte:0,offset:-50},{header:'7E2',req:'2104',byte:0,offset:-50}];
+const ENG_DEF={header:'7E0',req:'0105',byte:0,offset:-40};
+const newStat=()=>({min:Infinity,max:-Infinity,sum:0,n:0,hot:0,ovh:0,zoneRank:-1,lastAlarm:0});
+const state={mode:'demo',cvt:null,eng:null,history:[],stats:{cvt:newStat(),eng:newStat()},lastOk:{cvt:0,eng:0},link:{cvt:false,eng:false},zone:{cvt:ZONES.ok,eng:ZONES.ok},warn:90,danger:110,engWarn:100,engDanger:112,sound:true,verbose:false,proto:'6',src:{cvt:{...PRESETS[0]},eng:{...ENG_DEF}},keepAwake:false};
+let widgetOpen=false;
+function blockRefs(p){return{root:$('#'+p+'Tile'),temp:$('#'+p+'Temp'),zone:$('#'+p+'Zone'),fill:$('#'+p+'Fill'),marker:$('#'+p+'Marker'),tickW:$('#'+p+'TickWarn'),tickD:$('#'+p+'TickDanger')};}
+const B={cvt:blockRefs('cvt'),eng:blockRefs('eng'),wCvt:blockRefs('wCvt'),wEng:blockRefs('wEng')};
+const logBox=$('#logBox');
+function log(msg,cls){const d=document.createElement('div');if(cls)d.className=cls;const t=new Date(),p=n=>String(n).padStart(2,'0');d.textContent='['+p(t.getHours())+':'+p(t.getMinutes())+':'+p(t.getSeconds())+'] '+msg;logBox.appendChild(d);while(logBox.children.length>240)logBox.removeChild(logBox.firstChild);if(logBox.scrollHeight-logBox.scrollTop-logBox.clientHeight<60)logBox.scrollTop=logBox.scrollHeight;}
+let toastTimer=null;
+function toast(msg){if(NATIVE){AndroidBT.toast(msg);return;}const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600);}
+let actx=null,master=null;
+function ensureAudio(){if(NATIVE)return;if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)();master=actx.createGain();master.gain.value=state.sound?.16:0;master.connect(actx.destination);}catch(e){}}if(actx&&actx.state==='suspended')actx.resume();}
+document.addEventListener('pointerdown',ensureAudio);
+function beep(f,dur,type,delay){if(NATIVE||!actx||!state.sound)return;const t=actx.currentTime+(delay||0),o=actx.createOscillator(),g=actx.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(1,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.05);}
+function playWarn(){if(NATIVE){AndroidBT.playAlarm(2);return;}beep(660,.14,'sine',0);}
+function playDanger(){if(NATIVE){AndroidBT.playAlarm(3);return;}beep(880,.15,'square',0);beep(660,.15,'square',.2);beep(880,.22,'square',.4);}
+function playConnect(){if(NATIVE){AndroidBT.playAlarm(1);return;}beep(520,.1,'sine',0);beep(780,.14,'sine',.12);}
+function doVibrate(){if(NATIVE){AndroidBT.vibrate();return;}if(navigator.vibrate)navigator.vibrate([120,80,120]);}
+const pct=(v,g)=>(clamp(v,g.min,g.max)-g.min)/(g.max-g.min)*100;
+function thresholds(ch){return ch==='cvt'?{cool:45,warn:state.warn,danger:state.danger}:{cool:60,warn:state.engWarn,danger:state.engDanger};}
+function zoneOf(t,ch){const th=thresholds(ch);return t<th.cool?ZONES.cool:t<th.warn?ZONES.ok:t<th.danger?ZONES.warn:ZONES.danger;}
+function setTicks(r,ch,w,d){const g=RANGE[ch];r.tickW.style.left=pct(w,g)+'%';r.tickD.style.left=pct(d,g)+'%';}
+function updateTicks(){setTicks(B.cvt,'cvt',state.warn,state.danger);setTicks(B.eng,'eng',state.engWarn,state.engDanger);setTicks(B.wCvt,'cvt',state.warn,state.danger);setTicks(B.wEng,'eng',state.engWarn,state.engDanger);}
+function paintBlock(r,ch,t,z,stale){const g=RANGE[ch],col=t==null?'#93a7c9':z.color;r.root.style.setProperty('--bz',col);r.temp.textContent=t==null?'--':Math.round(t);r.temp.parentElement.classList.toggle('stale',stale);r.zone.textContent=t==null?'НЕТ ДАННЫХ':(stale?'НЕТ СВЯЗИ':z.label);if(t==null){r.fill.style.width='0%';r.marker.style.display='none';}else{const p=pct(t,g);r.fill.style.width=p+'%';r.marker.style.left=p+'%';r.marker.style.display='block';}}
+const chart=$('#chart'),wChart=$('#wChart');
+function prepCanvas(c,hDef){const ctx=c.getContext('2d'),w=c.clientWidth||300,h=c.clientHeight||hDef,dpr=Math.min(2,window.devicePixelRatio||1);if(c.width!==Math.round(w*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);return{ctx,w,h};}
+function drawChart(){const{ctx,w,h}=prepCanvas(chart,170),data=state.history.slice(-180);if(data.length<2){ctx.fillStyle='#93a7c9';ctx.font='12px system-ui';ctx.fillText('Нет данных…',12,h/2);return;}let lo=1e9,hi=-1e9;data.forEach(d=>{if(d.c!=null){lo=Math.min(lo,d.c);hi=Math.max(hi,d.c);}if(d.e!=null){lo=Math.min(lo,d.e);hi=Math.max(hi,d.e);}});if(lo>hi)return;lo=Math.min(30,lo)-6;hi=Math.max(state.danger+8,state.engDanger+8,hi)+6;const X=i=>8+(w-16)*i/(data.length-1),Y=t=>h-16-(h-30)*(t-lo)/(hi-lo);
+[{v:state.warn,c:'#ffb020',dash:[5,5],label:'CVT '+state.warn},{v:state.danger,c:'#ff4040',dash:[5,5],label:'CVT '+state.danger},{v:state.engDanger,c:'#ff4fd8',dash:[2,4],label:'ДВС '+state.engDanger}].forEach(L=>{if(L.v>lo&&L.v<hi){ctx.save();ctx.setLineDash(L.dash);ctx.strokeStyle=L.c;ctx.globalAlpha=.55;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(8,Y(L.v));ctx.lineTo(w-8,Y(L.v));ctx.stroke();ctx.globalAlpha=1;ctx.fillStyle=L.c;ctx.font='9px system-ui';ctx.fillText(L.label+'°',w-56,Y(L.v)-4);ctx.restore();}});
+function series(key,color){ctx.strokeStyle=color;ctx.lineWidth=2.4;ctx.lineJoin='round';ctx.beginPath();let st=false;data.forEach((d,i)=>{const v=d[key];if(v==null){st=false;return;}if(!st){ctx.moveTo(X(i),Y(v));st=true;}else ctx.lineTo(X(i),Y(v));});ctx.stroke();}
+series('c','#3fd9ff');series('e','#ff9f43');
+[['c','#3fd9ff','CVT',-9],['e','#ff9f43','ДВС',14]].forEach(([key,col,name,dy])=>{let li=-1;for(let i=data.length-1;i>=0;i--){if(data[i][key]!=null){li=i;break;}}if(li<0)return;const v=data[li][key],lx=X(li),ly=Y(v);ctx.fillStyle=col;ctx.beginPath();ctx.arc(lx,ly,4,0,7);ctx.fill();ctx.font='700 11px system-ui';const label=name+' '+Math.round(v)+'°',tw=ctx.measureText(label).width;ctx.fillText(label,Math.max(8,lx-tw-10),clamp(ly+dy,12,h-6));});}
+function drawWidgetChart(){if(!widgetOpen)return;const{ctx,w,h}=prepCanvas(wChart,70),data=state.history.slice(-90);if(data.length<2)return;let lo=1e9,hi=-1e9;data.forEach(d=>{if(d.c!=null){lo=Math.min(lo,d.c);hi=Math.max(hi,d.c);}if(d.e!=null){lo=Math.min(lo,d.e);hi=Math.max(hi,d.e);}});if(lo>hi)return;lo-=5;hi+=5;const X=i=>4+(w-8)*i/(data.length-1),Y=t=>h-6-(h-12)*(t-lo)/(hi-lo);function line(key,col){ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();let st=false;data.forEach((d,i)=>{const v=d[key];if(v==null){st=false;return;}if(!st){ctx.moveTo(X(i),Y(v));st=true;}else ctx.lineTo(X(i),Y(v));});ctx.stroke();}line('c','#3fd9ff');line('e','#ff9f43');}
+function fmtTime(s){s=Math.round(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function pushSample(c,e){const now=Date.now(),prev=state.history[state.history.length-1],dt=prev?(now-prev.ts)/1000:0;if(c!=null){state.cvt=c;state.lastOk.cvt=now;state.link.cvt=true;}if(e!=null){state.eng=e;state.lastOk.eng=now;state.link.eng=true;}state.history.push({ts:now,c:state.cvt,e:state.eng});if(state.history.length>1500)state.history.shift();
+[['cvt',c],['eng',e]].forEach(([ch,t])=>{if(t==null)return;const s=state.stats[ch],th=thresholds(ch),z=zoneOf(t,ch);s.n++;s.sum+=t;if(t<s.min)s.min=t;if(t>s.max)s.max=t;if(t>=th.warn)s.hot+=dt;if(z.rank>s.zoneRank&&now-s.lastAlarm>8000){if(z.rank===2){playWarn();log('⚠ '+(ch==='cvt'?'CVT':'ДВС')+' '+round1(t)+' °C','sys');}if(z.rank===3){s.ovh++;playDanger();doVibrate();log('🔥 ПЕРЕГРЕВ '+(ch==='cvt'?'CVT':'ДВС')+': '+round1(t)+' °C','err');}s.lastAlarm=now;}s.zoneRank=z.rank;state.zone[ch]=z;});
+if(NATIVE)AndroidBT.updateTemps(state.cvt==null?-999:state.cvt,state.eng==null?-999:state.eng,state.zone.cvt.label,state.zone.eng.label,state.mode==='demo'?'ДЕМО':'ONLINE');
+render();}
+function render(){const now=Date.now(),c=state.cvt,e=state.eng,cz=state.zone.cvt,ez=state.zone.eng;const staleC=state.mode==='ble'&&state.lastOk.cvt>0&&now-state.lastOk.cvt>6000,staleE=state.mode==='ble'&&state.lastOk.eng>0&&now-state.lastOk.eng>6000;document.documentElement.style.setProperty('--zone',c==null?'#93a7c9':cz.color);paintBlock(B.cvt,'cvt',c,cz,staleC);paintBlock(B.eng,'eng',e,ez,staleE);paintBlock(B.wCvt,'cvt',c,cz,staleC);paintBlock(B.wEng,'eng',e,ez,staleE);document.body.classList.toggle('danger',(c!=null&&cz.rank===3)||(e!=null&&ez.rank===3));const S=state.stats;
+$('#cMin').textContent=S.cvt.n?Math.round(S.cvt.min):'--';$('#cMax').textContent=S.cvt.n?Math.round(S.cvt.max):'--';$('#cAvg').textContent=S.cvt.n?Math.round(S.cvt.sum/S.cvt.n):'--';$('#cHot').textContent=fmtTime(S.cvt.hot);$('#cOvh').textContent=S.cvt.ovh;
+$('#eMin').textContent=S.eng.n?Math.round(S.eng.min):'--';$('#eMax').textContent=S.eng.n?Math.round(S.eng.max):'--';$('#eAvg').textContent=S.eng.n?Math.round(S.eng.sum/S.eng.n):'--';$('#eHot').textContent=fmtTime(S.eng.hot);$('#eOvh').textContent=S.eng.ovh;
+drawChart();drawWidgetChart();}
+function setChip(cls,text){['#statusChip','#wStatusChip'].forEach(id=>{const c=$(id);c.className='chip '+cls;c.textContent=text;});}
+function resetSession(){state.history=[];state.stats={cvt:newStat(),eng:newStat()};state.lastOk={cvt:0,eng:0};state.link={cvt:false,eng:false};state.zone={cvt:ZONES.ok,eng:ZONES.ok};log('— новая сессия —','sys');render();}
+let demoTimer=null,simC=62,simE=45,simStart=0;
+function seedDemo(){const now=Date.now();let c=34,e=38;for(let i=119;i>=0;i--){c+=(74-c)*.05+(Math.random()-.5);e+=(86-e)*.045+(Math.random()-.5)*.8;c=round1(c);e=round1(e);state.history.push({ts:now-i*1000,c,e});[['cvt',c],['eng',e]].forEach(([ch,t])=>{const s=state.stats[ch];s.n++;s.sum+=t;if(t<s.min)s.min=t;if(t>s.max)s.max=t;});}simC=c;simE=e;state.cvt=c;state.eng=e;state.zone.cvt=zoneOf(c,'cvt');state.zone.eng=zoneOf(e,'eng');state.stats.cvt.zoneRank=state.zone.cvt.rank;state.stats.eng.zoneRank=state.zone.eng.rank;}
+function demoTick(){const s=(Date.now()-simStart)/1000,cyc=Math.floor(s/80)%4,ph=s%80;let tc=78+5*Math.sin(s/13),te=88+3*Math.sin(s/17);if(ph>50&&ph<68){tc=97+4*Math.sin(s/3);te=99+3*Math.sin(s/5);}if(cyc===3&&ph>=60&&ph<66){tc=113;te=113;}simC+=(tc-simC)*.12+(Math.random()-.5)*.8;simE+=(te-simE)*.10+(Math.random()-.5)*.6;pushSample(round1(simC),round1(simE));}
+function startDemo(){stopDemo();state.mode='demo';simStart=Date.now();if(!state.stats.cvt.n)seedDemo();demoTimer=setInterval(demoTick,1000);setChip('demo','ДЕМО');updateSrcLabels();render();}
+function stopDemo(){if(demoTimer){clearInterval(demoTimer);demoTimer=null;}}
+const nativePending=new Map();let nativeReqId=0,nativeConnectPending=null;
+window.onNativeResponse=(id,r)=>{const p=nativePending.get(id);if(p){nativePending.delete(id);p.resolve(r);}};
+window.onNativeError=(id,e)=>{const p=nativePending.get(id);if(p){nativePending.delete(id);p.reject(new Error(e));}};
+window.onNativeConnected=(ok,msg)=>{if(nativeConnectPending){const p=nativeConnectPending;nativeConnectPending=null;ok?p.resolve(msg):p.reject(new Error(msg));}};
+window.onNativePermission=()=>{if($('#devicePicker').classList.contains('show'))showDevicePicker();};
+window.onNativeBack=()=>{if($('#devicePicker').classList.contains('show')){closeDevicePicker();return true;}if(widgetOpen){closeWidget();return true;}return false;};
+function nativeSend(cmd,timeout){return new Promise((res,rej)=>{const id=++nativeReqId;nativePending.set(id,{resolve:res,reject:rej});AndroidBT.send(cmd,id,timeout||2200);});}
+function sendCmd(cmd,timeout){if(NATIVE)return nativeSend(cmd,timeout);return Promise.reject(new Error('Требуется Android-приложение'));}
+function elmInit(){return (async()=>{try{await sendCmd('ATZ',4000);}catch(e){log('ATZ: '+e.message,'err');}await sleep(300);for(const c of['ATE0','ATL0','ATS0','ATH1','ATAT1','ATCAF1','ATSP'+state.proto]){try{const r=await sendCmd(c,1800);if(/ERROR|\?/.test(r))log(c+' → '+r.trim(),'err');}catch(e){log(c+': '+e.message,'err');}await sleep(40);}log('ELM327 инициализирован (proto '+state.proto+')','ok');})();}
+function parseResponse(resp,src){const up=resp.toUpperCase();if(/NO\s*DATA|UNABLE|STOPPED|BUS\s*ERROR|CAN\s*ERROR|\?/.test(up))throw new Error(up.replace(/\s+/g,' ').trim()||'пусто');const clean=up.replace(/[^0-9A-F]/g,''),req=src.req.toUpperCase(),mode=parseInt(req.slice(0,2),16),needle=((mode+0x40).toString(16)+req.slice(2)).toUpperCase(),idx=clean.indexOf(needle);if(idx<0)throw new Error('нет ответа '+needle);const bytes=clean.slice(idx+needle.length),b=src.byte;if(bytes.length<(b+1)*2)throw new Error('короткий ответ');const t=parseInt(bytes.slice(b*2,b*2+2),16)+src.offset;if(t<-40||t>170)throw new Error('неправдоподобно: '+t+'°');return t;}
+function updateLinkChip(){if(state.mode!=='ble')return;if(state.link.cvt&&state.link.eng)setChip('on','ONLINE');else if(state.link.cvt)setChip('scan','CVT ONLY');else if(state.link.eng)setChip('scan','ДВС ONLY');else setChip('err','ОШИБКА');}
+function startPolling(){const gen=++pollGen;pollFailC=0;pollFailE=0;pollLoop(gen);}
+let pollGen=0,pollFailC=0,pollFailE=0,scanning=false;
+async function pollLoop(gen){while(state.mode==='ble'&&gen===pollGen&&!scanning){let c=null,e=null;try{await sendCmd('ATSH'+state.src.cvt.header,1200);const r=await sendCmd(state.src.cvt.req,2000);c=parseResponse(r,state.src.cvt);pollFailC=0;}catch(err){pollFailC++;state.link.cvt=false;log('CVT: '+err.message,'err');}await sleep(30);try{await sendCmd('ATSH'+state.src.eng.header,1200);const r=await sendCmd(state.src.eng.req,2000);e=parseResponse(r,state.src.eng);pollFailE=0;}catch(err){pollFailE++;state.link.eng=false;log('ДВС: '+err.message,'err');}if(c!=null||e!=null){pushSample(c,e);updateLinkChip();}else{if(pollFailC>=3&&pollFailE>=3){setChip('err','ОШИБКА');try{await elmInit();}catch(_){}}if(pollFailC>=7&&pollFailE>=7){toast('Адаптер не отвечает');disconnectAdapter();return;}render();}await sleep(700);}}
+function setConnectUI(on){$('#connectBtn').textContent=on?'⏏ Отключить':'⚡ Подключить адаптер';$('#wConnectBtn').textContent=on?'⏏':'⚡';}
+function showDevicePicker(){const list=NATIVE?JSON.parse(AndroidBT.listPaired()||'[]'):[];const box=$('#devList');box.innerHTML='';if(!list.length){const p=document.createElement('p');p.textContent='Нет сопряжённых устройств. Сначала сопрягите ELM327 в настройках Bluetooth (PIN 1234 или 0000), затем вернитесь сюда.';box.appendChild(p);}list.forEach(d=>{const b=document.createElement('button');b.className='dev';b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 7l10 10-5 4V3l5 4L7 17"/></svg><span><b></b><small></small></span>';b.querySelector('b').textContent=d.name;b.querySelector('small').textContent=d.mac;b.onclick=()=>doNativeConnect(d.mac);box.appendChild(b);});$('#devicePicker').classList.add('show');}
+function closeDevicePicker(){$('#devicePicker').classList.remove('show');}
+async function doNativeConnect(mac){closeDevicePicker();$('#connectBtn').disabled=true;$('#wConnectBtn').disabled=true;setChip('scan','ПОДКЛЮЧЕНИЕ');log('Подключение к '+mac+'…','sys');try{await new Promise((res,rej)=>{nativeConnectPending={resolve:res,reject:rej};AndroidBT.connect(mac);});stopDemo();$('#demoSwitch').checked=false;state.mode='ble';resetSession();await elmInit();setChip('on','ONLINE');setConnectUI(true);updateSrcLabels();log('✅ Подключено','ok');toast('Подключено');playConnect();startPolling();}catch(e){log('Ошибка: '+e.message,'err');toast('Ошибка: '+e.message);setChip('off','OFFLINE');setConnectUI(false);}finally{$('#connectBtn').disabled=false;$('#wConnectBtn').disabled=false;}}
+function connectAdapter(){if(!NATIVE){toast('Эта сборка работает только в Android-приложении');return;}if(!AndroidBT.bluetoothEnabled()){toast('Включите Bluetooth');AndroidBT.openBluetoothSettings();return;}showDevicePicker();}
+function disconnectAdapter(){if(NATIVE)AndroidBT.disconnect();state.mode='idle';state.cvt=null;state.eng=null;pollGen++;setConnectUI(false);$('#demoSwitch').checked=false;setChip('off','OFFLINE');updateSrcLabels();render();}
+function srcDesc(s){return s.header+' · '+s.req+' · '+'ABCD'[s.byte]+(s.offset>=0?'+':'−')+Math.abs(s.offset)+' · proto '+state.proto;}
+function updateSrcLabels(){const c='CVT · '+srcDesc(state.src.cvt),e='ДВС · '+srcDesc(state.src.eng);$('#cvtSrcLine').textContent=c;$('#engSrcLine').textContent=e;$('#wFoot').textContent=c+'  ·  '+e;}
+async function scanSources(){if(state.mode!=='ble'){toast('Сначала подключите адаптер');return;}scanning=true;$('#scanBtn').disabled=true;setChip('scan','ПОИСК');const box=$('#scanRes');box.innerHTML='';const oldC={...state.src.cvt};let found=null;const tests=[{ch:'cvt',label:'CVT 7E1·2104',src:{...PRESETS[0]}},{ch:'cvt',label:'CVT 7E2·2104',src:{...PRESETS[1]}},{ch:'eng',label:'ДВС 7E0·0105',src:{...state.src.eng}}];for(const t of tests){const chip=document.createElement('span');chip.className='schip';box.appendChild(chip);try{await sendCmd('ATSH'+t.src.header,1200);const r=await sendCmd(t.src.req,2200);const v=parseResponse(r,t.src);chip.classList.add('ok');chip.textContent=t.label+' → '+v+'° ✓';if(t.ch==='cvt'&&!found)found=t.src;}catch(e){chip.classList.add('bad');chip.textContent=t.label+' → '+e.message.slice(0,24);}}if(found){state.src.cvt={...found};syncInputs();toast('Источник CVT найден');}else{state.src.cvt=oldC;toast('CVT не найден — попробуйте протокол «Авто»');}updateSrcLabels();scanning=false;$('#scanBtn').disabled=false;if(state.mode==='ble'){setChip('on','ONLINE');startPolling();}}
+function syncInputs(){const c=state.src.cvt,e=state.src.eng;$('#hdrIn').value=c.header;$('#reqIn').value=c.req;$('#byteSel').value=c.byte;$('#offIn').value=c.offset;$('#engHdrIn').value=e.header;$('#engReqIn').value=e.req;$('#engByteSel').value=e.byte;$('#engOffIn').value=e.offset;const i=PRESETS.findIndex(p=>p.header===c.header&&p.req===c.req&&p.byte===c.byte&&p.offset===c.offset);$('#presetSel').value=i>=0?String(i):'custom';$('#protoSel').value=state.proto;}
+function applyCustom(){const h=$('#hdrIn').value.trim().toUpperCase(),r=$('#reqIn').value.trim().toUpperCase(),eh=$('#engHdrIn').value.trim().toUpperCase(),er=$('#engReqIn').value.trim().toUpperCase();if(!HEX.test(h)||!(h.length===3||h.length===8)){toast('CVT заголовок: 3 или 8 hex');return;}if(!HEX.test(r)||r.length<4||r.length%2){toast('CVT запрос: чётное число hex');return;}if(!HEX.test(eh)||!(eh.length===3||eh.length===8)){toast('ДВС заголовок: 3 или 8 hex');return;}if(!HEX.test(er)||er.length<4||er.length%2){toast('ДВС запрос: чётное число hex');return;}state.src.cvt={header:h,req:r,byte:+$('#byteSel').value,offset:clamp(parseInt($('#offIn').value)||0,-128,128)};state.src.eng={header:eh,req:er,byte:+$('#engByteSel').value,offset:clamp(parseInt($('#engOffIn').value)||0,-128,128)};syncInputs();updateSrcLabels();saveSettings();toast('Применено');}
+function saveSettings(){try{localStorage.setItem('cvtSettings',JSON.stringify({warn:state.warn,danger:state.danger,engWarn:state.engWarn,engDanger:state.engDanger,proto:state.proto,src:state.src,sound:state.sound,verbose:state.verbose,scale:state.scale||1,keepAwake:state.keepAwake}));}catch(e){}}
+function loadSettings(){try{const s=JSON.parse(localStorage.getItem('cvtSettings')||'null');if(!s)return;if(Number.isFinite(s.warn))state.warn=s.warn;if(Number.isFinite(s.danger))state.danger=s.danger;if(Number.isFinite(s.engWarn))state.engWarn=s.engWarn;if(Number.isFinite(s.engDanger))state.engDanger=s.engDanger;if(s.proto)state.proto=String(s.proto);if(s.src&&s.src.cvt&&s.src.eng)state.src=s.src;if(typeof s.sound==='boolean')state.sound=s.sound;if(typeof s.verbose==='boolean')state.verbose=s.verbose;if(Number.isFinite(s.scale))state.scale=s.scale;if(typeof s.keepAwake==='boolean')state.keepAwake=s.keepAwake;}catch(e){}}
+function syncControls(){ $('#warnRange').value=state.warn;$('#warnVal').textContent=state.warn+'°';$('#dangerRange').value=state.danger;$('#dangerVal').textContent=state.danger+'°';$('#engWarnRange').value=state.engWarn;$('#engWarnVal').textContent=state.engWarn+'°';$('#engDangerRange').value=state.engDanger;$('#engDangerVal').textContent=state.engDanger+'°';const sc=Math.round((state.scale||1)*100);$('#scaleRange').value=sc;$('#scaleVal').textContent=sc+'%';document.documentElement.style.setProperty('--scale',state.scale||1);$('#verboseChk').checked=state.verbose;$('#soundBtn').textContent=state.sound?'🔊':'';$('#wSoundBtn').textContent=state.sound?'🔊':'';$('#wakeSwitch').checked=state.keepAwake;if(NATIVE)AndroidBT.setSoundEnabled(state.sound);}
+function openWidget(){widgetOpen=true;$('#widgetView').hidden=false;document.body.classList.add('widget-open');render();}
+function closeWidget(){widgetOpen=false;$('#widgetView').hidden=true;document.body.classList.remove('widget-open');render();}
+function toggleWidget(){widgetOpen?closeWidget():openWidget();}
+function toggleSound(){state.sound=!state.sound;ensureAudio();if(master)master.gain.value=state.sound?.16:0;const icon=state.sound?'🔊':'';$('#soundBtn').textContent=icon;$('#wSoundBtn').textContent=icon;if(NATIVE)AndroidBT.setSoundEnabled(state.sound);saveSettings();toast(state.sound?'Звук включён':'Звук выключен');}
+function toggleFullscreen(){if(NATIVE){toast('Полный экран управляется системой');return;}if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else document.documentElement.requestFullscreen().catch(()=>{});}
+function setWakeNative(on){state.keepAwake=on;if(NATIVE)AndroidBT.setKeepScreenOn(on);saveSettings();}
+$('#connectBtn').onclick=()=>{state.mode==='ble'?(disconnectAdapter(),toast('Отключено')):connectAdapter();};
+$('#wConnectBtn').onclick=()=>{state.mode==='ble'?(disconnectAdapter(),toast('Отключено')):connectAdapter();};
+$('#demoSwitch').onchange=e=>{if(e.target.checked){if(state.mode==='ble')disconnectAdapter();startDemo();}else{stopDemo();state.mode='idle';state.cvt=null;state.eng=null;setChip('off','OFFLINE');setConnectUI(false);render();}};
+$('#soundBtn').onclick=toggleSound;$('#wSoundBtn').onclick=toggleSound;$('#fsBtn').onclick=toggleFullscreen;$('#wFsBtn').onclick=toggleFullscreen;
+$('#widgetBtn').onclick=toggleWidget;$('#widgetBtn2').onclick=openWidget;$('#wExitBtn').onclick=closeWidget;
+$('#btSettingsBtn').onclick=()=>{if(NATIVE)AndroidBT.openBluetoothSettings();};$('#pickerClose').onclick=closeDevicePicker;
+function bindRange(id,valId,key,isDanger){$(id).oninput=e=>{state[key]=+e.target.value;if(key==='warn'&&state.danger<=state.warn+4){state.danger=state.warn+5;}if(key==='danger')state.danger=Math.max(state.danger,state.warn+5);if(key==='engWarn'&&state.engDanger<=state.engWarn+4){state.engDanger=state.engWarn+5;}if(key==='engDanger')state.engDanger=Math.max(state.engDanger,state.engWarn+5);syncControls();updateTicks();if(state.cvt!=null){state.zone.cvt=zoneOf(state.cvt,'cvt');state.stats.cvt.zoneRank=state.zone.cvt.rank;}if(state.eng!=null){state.zone.eng=zoneOf(state.eng,'eng');state.stats.eng.zoneRank=state.zone.eng.rank;}saveSettings();render();};}
+bindRange('#warnRange','#warnVal','warn');bindRange('#dangerRange','#dangerVal','danger');bindRange('#engWarnRange','#engWarnVal','engWarn');bindRange('#engDangerRange','#engDangerVal','engDanger');
+$('#scaleRange').oninput=e=>{state.scale=e.target.value/100;document.documentElement.style.setProperty('--scale',state.scale);$('#scaleVal').textContent=e.target.value+'%';saveSettings();};
+$('#wakeSwitch').onchange=e=>setWakeNative(e.target.checked);
+$('#resetBtn').onclick=()=>{resetSession();if(state.mode==='demo')seedDemo();render();toast('Сессия сброшена');};
+$('#csvBtn').onclick=()=>{if(!state.history.length){toast('Нет данных');return;}let csv='time;cvt_c;engine_c;cvt_state;engine_state\n';state.history.forEach(d=>{csv+=new Date(d.ts).toISOString()+';'+(d.c??'')+';'+(d.e??'')+';'+(d.c!=null?zoneOf(d.c,'cvt').label:'')+';'+(d.e!=null?zoneOf(d.e,'eng').label:'')+'\n';});const name='cvt-temp_'+new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')+'.csv';if(NATIVE){const p=AndroidBT.saveCsv(name,csv);toast(p.startsWith('ERROR')?'Ошибка сохранения':'Сохранено: '+p);}else{const blob=new Blob([csv],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);toast('CSV сохранён');}log('Экспорт CSV','sys');};
+$('#presetSel').onchange=e=>{if(e.target.value!=='custom'){state.src.cvt={...PRESETS[+e.target.value]};syncInputs();updateSrcLabels();saveSettings();toast('Пресет применён');}};
+$('#protoSel').onchange=async e=>{state.proto=e.target.value;saveSettings();updateSrcLabels();if(state.mode==='ble'){try{await sendCmd('ATSP'+state.proto,1800);toast('Протокол изменён');}catch(err){toast(err.message);}}};
+$('#applyBtn').onclick=applyCustom;$('#scanBtn').onclick=scanSources;$('#verboseChk').onchange=e=>{state.verbose=e.target.checked;saveSettings();};
+window.addEventListener('resize',()=>{drawChart();drawWidgetChart();});
+(function init(){loadSettings();if(!Number.isFinite(state.scale))state.scale=1;syncControls();syncInputs();updateTicks();updateSrcLabels();if(!NATIVE){const p=document.createElement('p');p.className='hint';p.style.color='#ffd58a';p.textContent='Откройте это приложение внутри Android APK — Bluetooth SPP доступен только там.';document.querySelector('.controls-card').prepend(p);}log('CVT·TEMP v4.0 (Android SPP) запущен.','sys');startDemo();if(state.keepAwake)setWakeNative(true);if(new URLSearchParams(location.search).get('widget')==='1')openWidget();})();
+</script>
+</body>
+</html>
