@@ -16,6 +16,7 @@ import android.webkit.WebViewClient;
 public class MainActivity extends Activity {
     private WebView web;
     private BtBridge bridge;
+    private boolean keepAwake = false;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -23,10 +24,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(0xFF070D18);
         getWindow().setNavigationBarColor(0xFF070D18);
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
-        askBluetoothPermission();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
         web = new WebView(this);
         setContentView(web);
@@ -48,12 +48,21 @@ public class MainActivity extends Activity {
         web.setWebViewClient(new WebViewClient());
         web.setWebChromeClient(new WebChromeClient());
         web.setBackgroundColor(0xFF070D18);
-        web.loadUrl("file:///android_asset/index.html?widget=0");
+        web.loadUrl("file:///android_asset/index.html");
 
-        if (getIntent() != null && getIntent().getBooleanExtra("widget", false)) {
-            web.post(() -> web.evaluateJavascript("window.openWidget && window.openWidget()", null));
-        }
+        askBluetoothPermission();
     }
+
+    /** Вызывается из JS; запоминается и переустанавливается при каждом возврате в приложение. */
+    public void applyKeepAwake(boolean on) {
+        keepAwake = on;
+        runOnUiThread(() -> {
+            if (keepAwake) getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        });
+    }
+
+    public boolean isKeepAwake() { return keepAwake; }
 
     private void askBluetoothPermission() {
         if (Build.VERSION.SDK_INT >= 31) {
@@ -66,6 +75,7 @@ public class MainActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        applyKeepAwake(keepAwake);
         if (requestCode == 1001 && web != null) {
             web.evaluateJavascript("window.onNativePermission && window.onNativePermission()", null);
         }
@@ -82,7 +92,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (web != null) web.onResume();
+        applyKeepAwake(keepAwake);
+        if (web != null) {
+            web.onResume();
+            web.evaluateJavascript("window.onNativeResume && window.onNativeResume()", null);
+        }
     }
 
     @Override
